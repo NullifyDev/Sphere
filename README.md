@@ -47,7 +47,7 @@ __Do Note:__ A name of an (official) module will be in brackets `()` to indicate
 <br>
 
 ### Support
-Due to the fact that this is a prototype, this project is written in C#, developedd with .Net 6 (soon to be updated with .Net 7 on November 2022), All of the Desktop Operating Systems (and other OSs that have .Net Support) are supported automatically (compilation script coming soon).
+Due to the fact that this is a prototype, this project is written in C#, developed with .Net 6 (soon to be updated with .Net 7 on November 2022), All of the Desktop Operating Systems (and other OSs that have .Net Support) are supported automatically (compilation script coming soon).
 - [x] Linux
 - [x] Windows
 - [x] MacOS
