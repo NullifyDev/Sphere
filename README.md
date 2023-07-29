@@ -23,7 +23,7 @@ __Do Note:__ A name of an (official) module will be in brackets `()` to indicate
 | Handle    | Description                   |
 |-----------|-------------------------------|
 | `@<reg>`  | Address of the given register |
-| `%<reg>`  | Value of the given register   |
+| `$<reg>`  | Value of the given register   |
 
 ### Instructions
 
