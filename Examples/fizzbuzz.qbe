@@ -1,0 +1,20 @@
+﻿## Qbe Version 1.1 - User-Defined Function Return Type
+
+func "modulo" [ a, b ]: bin
+    c = a - b
+    chk c < b [ret c]      ## check if expression "c is less than b" is true. If so, return c
+    call "modulo" [ c, b ] ## call function "modulo" with arguments c and b, if otherwise
+endfunc
+
+a = 0
+func "fizzbuzz" [ limit ]:
+    chk a < limit [ 
+        a = a + 1
+        chk (call "modulo" [ a, 15 ]) == 0 [ outln "FizzBuzz" ]
+        chk (call "modulo" [ a, 3  ]) == 0 [ outln "Fizz" ]
+        chk (call "modulo" [ a, 15 ]) == 0 [ outln "Buzz" ]
+        chk (call "modulo" [ a, 3  ]) != 0 [ outln a ]
+        call "fizzbuzz" [ limit ]
+    ]
+    outln "Done!"
+endfunc
