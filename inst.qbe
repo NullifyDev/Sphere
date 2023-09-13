@@ -1,4 +1,0 @@
-﻿out "Hello, "
-outln "User!"
-outln "Please Enter your name:"
-inln
