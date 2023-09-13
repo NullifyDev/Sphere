@@ -1,0 +1,12 @@
+﻿#global
+
+# Folders
+.git/*
+.idea/*
+bin/*
+obj/*
+
+# Files
+.CSharpShellProjData.db
+.gitignore
+Notes

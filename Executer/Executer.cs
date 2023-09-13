@@ -169,7 +169,7 @@ public class Executer
     
     public static void FlattenList(object obj, List<object> resultList) 
     {
-        (obj is List<Variable>);
+        // (obj is List<Variable>);
         var list = obj as List<Variable> ?? new List<Variable>();
         if (list != null) 
         {
