@@ -1,6 +1,0 @@
-﻿func main [ id name age * ]:
-    outln "ID:" id
-    out *
-end
-
-call main [ 535 "johnson" 21 "Hello, World!"+"yes"]
