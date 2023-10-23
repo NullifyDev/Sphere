@@ -1,0 +1,17 @@
+# ninja log v5
+9	2014	7198031789710860	CMakeFiles/Qbe.dir/main.cpp.obj	df2adfd91c25236c
+27	2974	7197875788754246	CMakeFiles/Qbe.dir/lexer.cpp.obj	7b10e4b139bbdd43
+3093	4029	7197972597552302	Qbe.exe	2162692f3a9410e3
+3	891	7198032243229204	build.ninja	3a5189e3574a275c
+21	1877	7197868282129666	CMakeFiles/Qbe.dir/utils.cpp.obj	10cb00173a6e1c
+32	2612	7197970455589454	CMakeFiles/Qbe.dir/qbetoasm.cpp.obj	59916a890d2f6d46
+11	245	7197868265654853	CMakeFiles/Qbe.dir/cpptoasm.cpp.obj	43105df5ab5253d0
+8	3914	7198009980200076	CMakeFiles/Qbe.dir/src/lexer/tokens/toasm.cpp.obj	f668a19252c82df3
+8	6747	7198026334440204	CMakeFiles/Qbe.dir/src/lexer/lexer.cpp.obj	ae5a8aa111945654
+21	6750	7198026335610249	CMakeFiles/Qbe.dir/src/lexer/tokens/tokens.cpp.obj	63ef9aefe936322a
+2	561	7198032243229204	build.ninja	3a5189e3574a275c
+9	1983	7198032264688981	CMakeFiles/Qbe.dir/main.cpp.obj	df2adfd91c25236c
+11	5561	7198036101871383	CMakeFiles/Qbe.dir/main.cpp.obj	df2adfd91c25236c
+22	5576	7198036101951411	CMakeFiles/Qbe.dir/src/lexer/tokens/tokens.cpp.obj	63ef9aefe936322a
+29	5578	7198036107151373	CMakeFiles/Qbe.dir/src/lexer/lexer.cpp.obj	ae5a8aa111945654
+11	2665	7198037075518471	CMakeFiles/Qbe.dir/main.cpp.obj	df2adfd91c25236c

@@ -1,0 +1,2 @@
+outln "Hello, World!"
+ret 0
