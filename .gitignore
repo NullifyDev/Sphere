@@ -1,0 +1,8 @@
+#folders
+.idea/
+obj/
+bin/
+
+#files
+.gitignore
+*.bat

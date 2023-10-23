@@ -1,3 +1,3 @@
 git pull
 git commit -m %1
-git push -m origin main
+git push -u origin main

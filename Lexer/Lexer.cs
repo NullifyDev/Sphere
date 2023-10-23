@@ -1,191 +1,103 @@
-﻿using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 
-namespace Qbe;
-
-public class Lexer {
-    private int start = 0, current = 0, line = 1, col = 0, currLineCol = 0;
-    private readonly string source;
-    private List<Token> tokens = new();
-    private bool EOF => current >= source.Length;
-    private Dictionary<string, TokenType> reserved = new();
-    public Lexer(string source)
+namespace Qbe
+{
+    public class Lexer
     {
-        this.source = source;
-        this.reserved = new Dictionary<string, TokenType>()
-        {
-            // Instructions
-            ["up"] = TokenType.PtrUp,
-            ["down"] = TokenType.PtrDown,
-            ["incr"] = TokenType.Incr,
-            ["decr"] = TokenType.Decr,
-            ["ret"] = TokenType.Ret,
-            ["jmp"] = TokenType.Jmp,
-            ["jmpTo"] = TokenType.JmpTo,
-            ["comp"] = TokenType.Comp,
-            ["func"] = TokenType.Func,
-            ["call"] = TokenType.Call,
-            ["out"] = TokenType.PrintOut,
-            ["outln"] = TokenType.PrintOutln,
-            ["in"] = TokenType.Input,
-            ["inln"] = TokenType.InputLine,
-            [">>"] = TokenType.BindToR,
-            ["end"] = TokenType.End,
-            ["<<"] = TokenType.BindToL,
-            ["num"] = TokenType.Num,
-            ["str"] = TokenType.Str,
-            ["bool"] = TokenType.Bool,
-            ["char"] = TokenType.Char,
-            ["void"] = TokenType.Void
-        };
-    }
-     #region Helper functions
-    private char advance() => !EOF ? source[current++] : '\0';
-    private char peek(int ahead = 0) => (current + ahead >= source.Length) ? '\0' : source[current + ahead];
-    public string ScanString()
-    {
-        string str = "";
-        this.advance();
-        while (peek() != '\"' && !EOF)
-        {
-            str += this.source[this.current];
-            advance();
-        }
-        this.col += str.Length;
-        return str;
-    }
-    #endregion
-    public List<Token> Lex() {
-        string lexeme = "";
-        while(!EOF) {
-            var c = this.source[this.current];
-            switch (c) {
-                case ']':  
-                    tokens.Add(new Token(TokenType.RBracket, c.ToString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col; 
-                    break;
-                case '[':  
-                    tokens.Add(new Token(TokenType.LBracket, c.ToString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col; 
-                    break;
-                case '+':
-                    tokens.Add(new Token(TokenType.Plus, c.ToString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col; 
-                    break;
-                case '*':  
-                    tokens.Add(new Token(TokenType.Star,     c.ToString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col; 
-                    break;
-                case '\"': 
-                    tokens.Add(new Token(TokenType.Str,this.ScanString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col; 
-                    break;
-                case ':':  
-                    tokens.Add(new Token(TokenType.Colon,    c.ToString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col; 
-                    break;
-				case ',':
-					tokens.Add(new Token(TokenType.Comma, c.ToString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col; 
-                    break;
-				case '=':
-                    tokens.Add(new Token(TokenType.Equals, c.ToString(), this.line, this.currLineCol));
-                    this.currLineCol = this.col;
-                    break;
-                case ' ':
-                    if (lexeme.Length <= 0)
-                    {
-                        this.currLineCol = this.col;
-                        break;
-                    }
-                    else if (this.reserved.Keys.Contains(lexeme))
-                    {
-                        tokens.Add(new Token(this.reserved[lexeme], lexeme, this.line, this.currLineCol));
-                        this.currLineCol = this.col;
-						lexeme = "";
-                    } else if (int.TryParse(lexeme, out int x))
-                    {
-                        tokens.Add(new Token(TokenType.Num, lexeme, this.line, this.currLineCol));
-                        this.currLineCol = this.col;
-                        lexeme = "";
-                    }
-                    checkLexeme(lexeme);
-                    lexeme = "";
-                    break;
-                case '#':
-                    if (this.source[this.current + 1] == '#') {
-                        tokens.Add(new Token(TokenType.slComment, "##", this.line, this.currLineCol));
-                        this.currLineCol = this.col;
-                    } else if (this.source[this.current + 1] == '>') {
-                        tokens.Add(new Token(TokenType.mlCommentR, "#>", this.line, this.currLineCol));
-                        this.currLineCol = this.col;
-                    }
+        public string source;
+        private int curr = 0;
+        private int line = 0;
+        private int col = 0;
 
-                    break;
-                case '<':
-                    if (this.source[this.current + 1] == '#') {
-                        tokens.Add(new Token(TokenType.mlCommentL, "<#", this.line, this.currLineCol));
-                        this.currLineCol = this.col;
-                    }
-                    break;
-                case '\n':
-                    if (lexeme.Length > 0)
-                    {
-                        if (this.reserved.Keys.Contains(lexeme)) {
-                            this.currLineCol = this.col - lexeme.Length;
-                            tokens.Add(new Token(this.reserved[lexeme], lexeme, this.line, this.currLineCol));
-                        }
-                        checkLexeme(lexeme);
-                        if (lexeme == "\n") {
-                            lexeme = "";
-                            this.line++;
-                            this.col = 0;
-                            this.currLineCol = this.col;
-                        }
-                    }
-
-                    lexeme = "";
-                    this.col = 0;
-                    this.line++;
-                    this.currLineCol = this.col;
-                    tokens.Add(new Token(TokenType.EOL, c.ToString(), this.line, this.currLineCol));
-                    break;
-                default:
-                    lexeme += checkLexeme(lexeme);
-                    break;
-            }
-            this.col++;
-            this.current++;
-        }
-        this.tokens.Add(new Token(TokenType.EOF, "", this.line+1, this.col));
-        return tokens;
-    }
-
-    public char checkLexeme(string lexeme)
-    {
-        if(lexeme.Length <= 0) return this.source[this.current];
-        if (char.IsDigit(peek()) && char.IsWhiteSpace(peek()))
+        public Lexer(string source)
         {
-            while (char.IsDigit(advance())) lexeme += peek();
-            tokens.Add(new Token(TokenType.Num, lexeme, this.line, this.currLineCol));
-            this.col += lexeme.Length;
-            this.currLineCol = this.col;
-            lexeme = "";
+            this.source = source;
         }
-        else if (lexeme == "true" || lexeme == "false")
+
+        public IEnumerable<Token> Lex()
         {
-            tokens.Add(new Token(TokenType.Bool, lexeme, this.line, this.currLineCol));
-            this.currLineCol = this.col;
-            lexeme = "";
-        }
-        else {
-            if (peek() == ' ' || peek() == '\n')
+            while (curr < source.Length)
             {
-                tokens.Add(new Token(TokenType.Identifier, lexeme, this.line, this.currLineCol));
-                lexeme = "";
+                this.col++;
+                char currentChar = source[curr];
+
+                if (char.IsWhiteSpace(currentChar))
+                {
+                    curr++;
+                    continue;
+                }
+                else if (currentChar.Equals('\n'))
+                {
+                    this.line++;
+                    this.col = 0;
+                    curr++;
+                    // yield return new Token(TokenType.EOL, "\n", this.line, this.col);
+                }
+                else if (char.IsLetter(currentChar)) yield return ScanIdentifier();
+                else if (char.IsDigit(currentChar)) yield return ScanNumber();
+                else if (currentChar == '"') yield return ScanString();
+                else
+                {
+                    // Handle other special characters or tokens
+                    curr++;
+                }
             }
         }
-        lexeme = "";
-        return this.source[this.current];
+
+        private Token ScanIdentifier()
+        {
+            int start = curr;
+            while (curr < source.Length && char.IsLetterOrDigit(source[curr]))
+            {
+                curr++;
+            }
+            string identifier = source.Substring(start, curr - start);
+            // Check for reserved words and return the appropriate token type
+            if (reserved.TryGetValue(identifier, out TokenType tokenType))
+            {
+                return new Token(tokenType, identifier, this.line, this.col);
+            }
+
+            return new Token(TokenType.Identifier, identifier, this.line, this.col);
+        }
+
+        private Token ScanNumber()
+        {
+            int start = curr;
+            while (curr < source.Length && char.IsDigit(source[curr]))
+            {
+                curr++;
+            }
+            string number = source.Substring(start, curr - start);
+            return new Token(TokenType.NumLit, number, this.line, start);
+        }
+
+        private Token ScanString()
+        {
+            int start = curr + 1;
+            while (curr < source.Length && source[curr] != '"')
+            {
+                curr++;
+            }
+            if (curr >= source.Length || source[curr] != '"')
+            {
+                throw new Exception("Unterminated string");
+            }
+            string str = source.Substring(start, curr - start);
+            curr++; // Consume the closing double quote
+            return new Token(TokenType.StringLit, str, this.line, this.col);
+        }
+
+        public bool AtEnd(int curr) => curr >= this.source.Length;
+        
+        private Dictionary<string, TokenType> reserved = new Dictionary<string, TokenType>
+        {
+            { "up", TokenType.PtrUp },
+            { "down", TokenType.PtrDown },
+            { "incr", TokenType.IncrAddr },
+            { "decr", TokenType.DecrAddr }
+        };
+
+        public bool NotAtEnd() => curr < this.source.Length;
     }
 }

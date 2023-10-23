@@ -1,0 +1,6 @@
+func main [ a * ]: 
+    outln *
+    out a
+end 
+    
+call main [ "Hello, World!" "This string has no new line" ]:

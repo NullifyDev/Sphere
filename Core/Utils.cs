@@ -6,6 +6,7 @@ public static class Utils
     public static void Outln(string str = "") => Console.WriteLine(str);
     public static void Wait(int ms = 0) => Task.Delay(ms);
     public static void LangErr(Token token, string msg = "Unspecified Error") => Crash($"Line: {token.line} | {msg}");
+    public static void LangErr(string msg = "Unspecified Error") => Crash($"{msg}");
 
     public static void Crash(string msg)
     {
@@ -13,7 +14,7 @@ public static class Utils
         Environment.Exit(0);
     }
 
-    public static DataType ToDataType(TokenType tType)
+    /*public static DataType ToDataType(TokenType tType)
     {
         // Outln($"[Utils] Token ToDataType: {tType}");
         return tType switch
@@ -25,6 +26,6 @@ public static class Utils
             TokenType.Star => DataType.Any,
             _              => DataType.Any
         };
-    }
-    public static DataType ToDataType(Token token) => ToDataType(token.Type);
+    }*/
+    // public static DataType ToDataType(Token token) => ToDataType(token.Type);
 }

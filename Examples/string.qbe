@@ -1,1 +1,7 @@
-﻿outln "This is a string"
+﻿func main (*): vec.any
+     ret [ 12 true * ]
+end
+
+outln(
+    "Program output" call main [ " " ]
+)

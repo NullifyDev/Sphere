@@ -1,0 +1,10 @@
+down
+incr
+down
+incr 2
+down 2
+up
+incr 4
+decr
+down 
+incr 5

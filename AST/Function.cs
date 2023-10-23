@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Headers;
+﻿/*using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using static Qbe.Utils;
@@ -9,7 +9,7 @@ namespace Qbe.AST;
 public class Function
 {
     public string name = "";
-    public List<Variable> Parameters = new();
+    public List<VarNode> Parameters = new();
     public List<Instruction> Body = new();
     public List<DataType> ReturnTypes = new();
     
@@ -24,20 +24,11 @@ public class Function
             if (Global.Tokens[Global.curr].Type == TokenType.Identifier ||
                 Global.Tokens[Global.curr].Type == TokenType.Star)
             {
-                if (func.Parameters.Any(x => x.Type == DataType.Any && x.Name == "*")) LangErr(Global.Tokens[Global.curr], "Illegal Function Parameter Definition - Cannot define parameters after Wild-Card Parameter: \"*\"");
-                else func.Parameters.Add(new Variable(Global.Tokens[Global.curr]));
+                if (func.Parameters.Any(x => x.Data.Type == DataType.Any && x.Name == "*")) LangErr(Global.Tokens[Global.curr], "Illegal Function Parameter Definition - Cannot define parameters after Wild-Card Parameter: \"*\"");
+                else func.Parameters.Add(new VarNode(Global.Tokens[Global.curr]));
             }
 
         if (Global.Tokens[Global.curr++].Type != TokenType.Colon) Crash($"Expected ':'. Got {Global.Tokens[Global.curr].Type} instead");
-        /* func.ReturnTypes.Add(Global.Tokens[Global.curr++].Type switch
-        {
-            TokenType.Bool => DataType.Bit,
-            TokenType.Char => DataType.Byte,
-            TokenType.Num => DataType.Byte,
-            TokenType.Star => DataType.Any,
-            TokenType.Void => DataType.Void,
-            TokenType.EOL => DataType.Void,
-        }); */
         switch (Global.Tokens[Global.curr++].Type)
         {
             case TokenType.Bool: // bit
@@ -74,4 +65,4 @@ public class Function
 
         return func;
     }
-}
+}*/

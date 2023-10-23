@@ -9,6 +9,11 @@
   <ItemGroup>
     <Folder Include="Utils\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="test.qbe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <PropertyGroup>
     <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
   </PropertyGroup>

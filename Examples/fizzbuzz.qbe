@@ -1,20 +1,33 @@
-﻿## Qbe Version 1.1 - User-Defined Function Return Type
+﻿```
+#> 
+    Functions get their own partitionned/allocated memory. Starting from the 0th address, the parameters will be first to be created. 
+    addresses can have a link to another memory partition as a value. When getting a return value, at the end of the partition, all items that will be returned will be in order of the variables at the return.
+    Global Variables get user-defined by initializing their address on the memory. their value upon initialization is 0b0 (null) by default. values can be initialized by setting a value after defining the address
 
-func "modulo" [ a, b ]: bin
-    c = a - b
-    chk c < b [ret c]      ## check if expression "c is less than b" is true. If so, return c
-    call "modulo" [ c, b ] ## call function "modulo" with arguments c and b, if otherwise
-endfunc
 
-a = 0
-func "fizzbuzz" [ limit ]:
-    chk a < limit [ 
-        a = a + 1
-        chk (call "modulo" [ a, 15 ]) == 0 [ outln "FizzBuzz" ]
-        chk (call "modulo" [ a, 3  ]) == 0 [ outln "Fizz" ]
-        chk (call "modulo" [ a, 15 ]) == 0 [ outln "Buzz" ]
-        chk (call "modulo" [ a, 3  ]) != 0 [ outln a ]
-        call "fizzbuzz" [ limit ]
+<#
+
+@a 0
+
+func "modulo" [ num1, num2 ]: bin
+    $res $num1 - $num2
+    chk $res < $num2 [ ret $res ]
+    call "modulo" [ $res, $num2 ]
+end
+
+
+$a 0
+func fizzbuzz [ limit ]:
+    chk $a < $limit [ 
+        $a +1 
+        chk (call "modulo" [ $a, 15 ]) 0 [ 
+            chk call "modulo" [ $a, 3 ]) 0 [
+                outln "FizzBuzz" 
+            ] : outln "Buzz"
+        ]
+        chk (call "modulo" [ $a, 3  ]) 0  [ outln "Fizz" ]
+        chk (call "modulo" [ $a, 3  ]) !0 [ outln a ]
+        call "fizzbuzz" [ $limit ]
     ]
     outln "Done!"
-endfunc
+end

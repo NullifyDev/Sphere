@@ -2,7 +2,5 @@
 stack tape | len 3000 ## define tape as stack and Assign it with 3000 indexes (default is 10)
 bin ptr
 
-
-
 func "main" [ input ]:
     
