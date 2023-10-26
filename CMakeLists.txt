@@ -13,4 +13,5 @@ add_executable(Qbe main.cpp
 
         src/lexer/lexer.cpp
         src/lexer/lexer.hpp
+        src/Parser/parser.cpp
 )

@@ -9,8 +9,8 @@
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
-        out("Incorrect usage. Correct usage is:");
-        out("qbe <input.qbe>");
+        Utils::Out("Incorrect usage. Correct usage is:");
+        Utils::Out("qbe <input.qbe>");
         return EXIT_FAILURE;
     }
 
@@ -24,9 +24,11 @@ int main(int argc, char* argv[]) {
 
     std::vector<Tokens::Token> tokens = Tokenize(contents);
     {
-        std::fstream file("../out.asm", std::ios::out);
+        std::fstream file("out.asm", std::ios::out);
         file << Tokens::ToAsm(tokens);
     }
 
+    system ("nasm -felf64 out.asm");
+    system ("ld -o out out.o");
     return EXIT_SUCCESS;
 }

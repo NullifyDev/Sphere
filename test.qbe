@@ -1,2 +1,1 @@
-outln "Hello, World!"
-ret 0
+exit 10

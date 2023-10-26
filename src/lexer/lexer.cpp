@@ -7,10 +7,9 @@
 
 #include "tokens/tokens.hpp"
 #include "lexer.hpp"
-#include "../../utils.hpp"
 
 std::vector<Tokens::Token> Tokenize(const std::string str) {
-    out("[Tokenizing...]");
+    Utils::Out("[Tokenizing...]");
     std::vector<Tokens::Token> tokens;
     std::string buff;
 
@@ -21,7 +20,7 @@ std::vector<Tokens::Token> Tokenize(const std::string str) {
         if (std::isalpha(c)) {
             buff.push_back(c);
             i++;
-            while (std::isalnum(str.at(i))) {
+            while (i < str.length() && std::isalnum(str.at(i))) {
                 buff.push_back(str.at(i));
                 i++;
             }
@@ -36,6 +35,11 @@ std::vector<Tokens::Token> Tokenize(const std::string str) {
             buff.clear();
             continue;
         }
+        else if (buff == "exit") {
+            tokens.push_back({.type = Tokens::Type::exit});
+            buff.clear();
+            continue;
+        }
         else if (c == '\"') {
             i++;
             while(str.at(i) != '\"') {
@@ -46,7 +50,7 @@ std::vector<Tokens::Token> Tokenize(const std::string str) {
             buff.clear();
             continue;
         } else if (std::isdigit(c)) {
-            while(!eof(str, i) && std::isdigit(str.at(i))) {
+            while(!Utils::Eof(str, i) && std::isdigit(str.at(i))) {
                 buff.push_back(str.at(i));
                 i++;
             }
@@ -62,7 +66,7 @@ std::vector<Tokens::Token> Tokenize(const std::string str) {
         } else if (std::isspace(c)) {
             continue;
         } else {
-            errout("Unknown token: " + buff);
+            Utils::Errout("Unknown token: " + buff);
             exit(EXIT_FAILURE);
         }
     }
