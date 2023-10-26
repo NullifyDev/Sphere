@@ -1,3 +1,0 @@
-C:/Users/Saturn/CLionProjects/Qbe/cmake-build-debug/CMakeFiles/Qbe.dir
-C:/Users/Saturn/CLionProjects/Qbe/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Saturn/CLionProjects/Qbe/cmake-build-debug/CMakeFiles/rebuild_cache.dir
