@@ -1,22 +1,22 @@
-<img src="Qbe.png" style="align-items: center" width="150"/>
+<img src="Sphere.png" style="align-items: center" width="150"/>
 
-# Qbe
-This is a minimalistic language, designed to be simple to understand and utilize.
-The language has a library named "ExtraKeys" to further aid the programmer without touching any of the pointer things.
+# Sphere
+Sphere is a minimalistic language, designed to be simple to write, understand and utilize.
+The language has a library named "High Level Macros" to further aid the programmer without manual memory manipulation.
 
 ### Official Modules
-ExtraKeys - ExtraKeys is a library that adds functions and keywords like `for` and `while` to the langugae to further ease the development of some, making Qbe feel like it is "High-Level" when it isnt.
+HLM (High Level Macros) - HLM is a macro collection that adds functions and keywords like `for` and `while` to the language to further ease the development for some peolpe, making Sphere feel like a high-level language, when in reality, it's very low-level. 
 
 
 ### Data Types
-__Do Note:__ A name of an (official) module will be in brackets `()` to indicate in what module that thing can be found.
+__Do Note:__ A name of an (official) external module will be in brackets `()` to indicate what module something exists in.
 
 
 ### Reference Operators
 | Handle    | Description                   |
 |-----------|-------------------------------|
-| `@<var>`  | Address of the given register |
-| `$<var>`  | Value of the given register   |
+| `@<var>`  | Address of the given variable |
+| `$<var>`  | Value of the given variable   |
 
 ### Instructions
 
@@ -27,7 +27,6 @@ __Do Note:__ A name of an (official) module will be in brackets `()` to indicate
 | `incr <int>`              | Increment current address by the given amount. Default value: 1         |
 | `decr <int>`              | Decrement current address by the given amount. Default value: 1         |
 | `func identifier (any)`   | Function with name with any arguments and argument types                |
-
 
 <br>
 
