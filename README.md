@@ -1,5 +1,6 @@
-<img src="Sphere.png" style="align-items: center" width="150"/>
-
+<p align="center">
+    <img src="Sphere.png" width="150"/>
+</p>
 # Sphere
 Sphere is a minimalistic language, designed to be simple to write, understand and utilize.
 The language has a library named "High Level Macros" to further aid the programmer without manual memory manipulation.
