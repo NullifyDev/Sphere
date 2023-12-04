@@ -1,24 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>ProperQbee</RootNamespace>
+    <RootNamespace>Sphere</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="output\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="test.qbe">
+    <None Update="test.spr">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="oneof" Version="3.0.263" />
   </ItemGroup>
   <PropertyGroup>
     <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
   </PropertyGroup>
   <PropertyGroup>
-    <LangVersion>latestMajor</LangVersion>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <UseMauiEssentials>false</UseMauiEssentials>

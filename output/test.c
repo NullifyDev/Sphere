@@ -1,5 +1,5 @@
-#include "F:\Backup Drive\Saturn\RiderProjects\Sphere\base.h"
+#include "/home/saturn/Sphere/output/base.h"
 
-Any main(int wildcard) {
-	printf("Hello, World!");
+int main(char * wildcard) {
+	printf("Hello, World!\n");
 }

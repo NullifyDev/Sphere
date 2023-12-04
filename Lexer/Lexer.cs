@@ -1,103 +1,157 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http.Headers;
 
-namespace Qbe
+namespace Sphere;
+public class Lexer
 {
-    public class Lexer
+    public string source;
+    private string file;
+    private int curr = 0;
+    private int line = 1;
+    private int column = 1;
+
+    public Lexer(string file, string source)
     {
-        public string source;
-        private int curr = 0;
-        private int line = 0;
-        private int col = 0;
-
-        public Lexer(string source)
-        {
-            this.source = source;
-        }
-
-        public IEnumerable<Token> Lex()
-        {
-            while (curr < source.Length)
-            {
-                this.col++;
-                char currentChar = source[curr];
-
-                if (char.IsWhiteSpace(currentChar))
-                {
-                    curr++;
-                    continue;
-                }
-                else if (currentChar.Equals('\n'))
-                {
-                    this.line++;
-                    this.col = 0;
-                    curr++;
-                    // yield return new Token(TokenType.EOL, "\n", this.line, this.col);
-                }
-                else if (char.IsLetter(currentChar)) yield return ScanIdentifier();
-                else if (char.IsDigit(currentChar)) yield return ScanNumber();
-                else if (currentChar == '"') yield return ScanString();
-                else
-                {
-                    // Handle other special characters or tokens
-                    curr++;
-                }
-            }
-        }
-
-        private Token ScanIdentifier()
-        {
-            int start = curr;
-            while (curr < source.Length && char.IsLetterOrDigit(source[curr]))
-            {
-                curr++;
-            }
-            string identifier = source.Substring(start, curr - start);
-            // Check for reserved words and return the appropriate token type
-            if (reserved.TryGetValue(identifier, out TokenType tokenType))
-            {
-                return new Token(tokenType, identifier, this.line, this.col);
-            }
-
-            return new Token(TokenType.Identifier, identifier, this.line, this.col);
-        }
-
-        private Token ScanNumber()
-        {
-            int start = curr;
-            while (curr < source.Length && char.IsDigit(source[curr]))
-            {
-                curr++;
-            }
-            string number = source.Substring(start, curr - start);
-            return new Token(TokenType.NumLit, number, this.line, start);
-        }
-
-        private Token ScanString()
-        {
-            int start = curr + 1;
-            while (curr < source.Length && source[curr] != '"')
-            {
-                curr++;
-            }
-            if (curr >= source.Length || source[curr] != '"')
-            {
-                throw new Exception("Unterminated string");
-            }
-            string str = source.Substring(start, curr - start);
-            curr++; // Consume the closing double quote
-            return new Token(TokenType.StringLit, str, this.line, this.col);
-        }
-
-        public bool AtEnd(int curr) => curr >= this.source.Length;
-        
-        private Dictionary<string, TokenType> reserved = new Dictionary<string, TokenType>
-        {
-            { "up", TokenType.PtrUp },
-            { "down", TokenType.PtrDown },
-            { "incr", TokenType.IncrAddr },
-            { "decr", TokenType.DecrAddr }
-        };
-
-        public bool NotAtEnd() => curr < this.source.Length;
+        this.file = file;
+        this.source = source;
     }
-}
+    
+    public IEnumerable<Token> Lex()
+    {
+        while (NotAtEnd())
+        {
+            switch (this.Peek())
+            {
+                case '\"': yield return ScanString(); break;
+                case '\n':
+                case '\r':
+                    yield return new Token(TokenType.EOL, this.Peek(), this.line, this.column);
+                    if (Peek(1) == '\n') Next();
+                    line++;
+                    this.column = 0;
+                    break;
+                case '(': yield return new Token(TokenType.LParen, this.Peek(), this.line, this.column); break;
+                case ')': yield return new Token(TokenType.RParen, this.Peek(), this.line, this.column); break;
+                case '[': yield return new Token(TokenType.LBracket, this.Peek(), this.line, this.column); break;
+                case ']': yield return new Token(TokenType.RBracket, this.Peek(), this.line, this.column); break;
+                case '}': yield return new Token(TokenType.RBrace, this.Peek(), this.line, this.column); break;
+                case '{': yield return new Token(TokenType.LBrace, this.Peek(), this.line, this.column); break;
+                case '$': yield return ScanObject(); continue;
+                case '@': yield return ScanObject(); continue;
+                case '*': yield return new Token(TokenType.Star, this.Peek(), this.line, this.column); break;
+                case '=': yield return new Token(TokenType.Equals, this.Peek(), this.line, this.column); break;
+                case '<': yield return new Token(TokenType.LThan, this.Peek(), this.line, this.column); break;
+                case '>': yield return new Token(TokenType.MThan, this.Peek(), this.line, this.column); break;
+                case '|': yield return new Token(TokenType.Pipe, this.Peek(), this.line, this.column); break;
+                case '+': yield return new Token(TokenType.Plus, this.Peek(), this.line, this.column); break;
+                case ':': yield return new Token(TokenType.Colon, this.Peek(), this.line, this.column); break;
+                default:
+                    if (char.IsLetter(this.Peek()))
+                    {
+                        yield return ScanIdentifier(); 
+                        continue;
+                    }
+                    else if (char.IsDigit(this.Peek()))
+                    {
+                        yield return ScanNumber(); 
+                        continue;
+                    }
+                    break;
+            }
+            Next();
+        }
+    }
+
+    private Token ScanIdentifier()
+    {
+        int col = this.column;
+        int start = curr;
+        while (NotAtEnd() && char.IsLetterOrDigit(Peek()))
+            Next();
+        
+        string identifier = source.Substring(start, curr - start);
+        
+        if (reserved.TryGetValue(identifier, out TokenType tokenType))
+            return new Token(tokenType, identifier, this.line, col);
+
+        return new Token(TokenType.Identifier, identifier, this.line, col);
+    }
+    
+    private Token ScanObject()
+    {
+        int col = this.column;
+        int start = curr;
+        while (NotAtEnd() && (char.IsLetterOrDigit(Peek()) || Peek() == '$' || Peek() == '@'))
+            Next();
+        
+        return new Token(TokenType.Object, source.Substring(start, curr - start), this.line, col);
+    }
+    
+    private Token ScanNumber()
+    {
+        int col = this.column;
+        int start = curr;
+        while (NotAtEnd() && char.IsDigit(Peek()))
+            Next();
+        
+        // return new Token(TokenType.NumLit, source.Substring(start, curr - start), this.line, start+1);
+        return new Token(TokenType.NumLit, source.Substring(start, curr - start), this.line, col);
+    }
+
+    private Token ScanBool()
+    {
+        int col = this.column;
+        Next();
+        int start = curr;
+        while (!char.IsWhiteSpace(this.Peek(1)))
+            Next();
+        
+        string lit = source.Substring(start, curr - start);
+        if (lit == "true") new Token(TokenType.BoolLit, lit, this.line, col);
+        else if (lit == "false") new Token(TokenType.BoolLit, lit, this.line, col);
+        else Error.Add(new(ErrorType.Syntax, this.file, $"Unknown literal '{lit}' ", this.line, col));
+        return null;
+    }
+
+    private Token ScanString()
+    {
+        int col = this.column;
+        Next();
+        int start = curr;
+        while (NotAtEnd() && Peek() != '\"')
+            Next();
+
+        return new Token(TokenType.StringLit, source.Substring(start, curr - start), this.line, col);
+    }
+    private Dictionary<string, TokenType> reserved = new() {
+        { "up",     TokenType.PtrUp      },
+        { "down",   TokenType.PtrDown    },
+        { "incr",   TokenType.IncrAddr   },
+        { "decr",   TokenType.DecrAddr   },
+        { "outln",  TokenType.PrintOutln },
+        { "out",    TokenType.PrintOut   },
+        { "fn",     TokenType.Func       },
+        { "in",     TokenType.Input      },
+        { "inln",   TokenType.InputLine  },
+        { "ret",    TokenType.Ret        },
+        { "if",     TokenType.If         },
+        { "jmp",    TokenType.Jmp        },
+        { "exit",   TokenType.Exit       },
+        { "<=",     TokenType.LTEqu      },
+        { ">=",     TokenType.MTEqu      },
+        { "!=",     TokenType.NEqu       },
+        { "sphere", TokenType.Pragma     },
+        { "conf",   TokenType.Config     }
+    };
+    
+    private bool NotAtEnd(int ahead = 0) => curr + ahead < this.source.Length;
+    private char Peek    (int ahead = 0) => this.NotAtEnd(ahead) ? this.source[curr + ahead] : '\0';
+    private char Next    () {
+        if (NotAtEnd())
+        {
+            curr++;
+            column++;
+        }
+        return this.Peek();
+    }
+}   

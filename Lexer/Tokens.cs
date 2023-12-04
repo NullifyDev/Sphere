@@ -1,24 +1,19 @@
-﻿namespace Qbe;
+﻿namespace Sphere;
 
 public enum TokenType
 {
     // Instructions
-    // Ret, Jmp, JmpTo, Comp, Func, Call, PrintOut, PrintOutln, Input, InputLine, ShiftL, ShiftR, End, Plus,
-        
-    // Data Types
-    // Num,   Str,   Bool, Char,  Void, //<-- These Data Types are treated as the following:
-//  Bin,   Bin,   Bit,   Bin,   0 
-//  Bin, Ascii[], bit,  ascii,  0
+    Ret, Jmp, If, Func, Call, PrintOut, PrintOutln, Input, InputLine, Plus, LParen, RParen, LBracket, RBracket, LBrace, RBrace,
+    Colon, MThan, LThan, Equals, Star, Pipe, Object, Exit, LTEqu, MTEqu, NEqu,
    
-    // Memory & pointer
+    // Memory & pointer manipulation
     PtrUp, PtrDown, IncrAddr, DecrAddr,
     
     // Data Literal
-    Identifier, NumLit, StringLit,
+    Identifier, NumLit, StringLit, BoolLit,
 
-    // Comma, Equals,
-   
-    // LBracket, RBracket, Star, Colon,
+    // Compiler Instruction Tokens
+    Pragma, Config,
     
     EOL, EOF
 }
@@ -30,7 +25,14 @@ public class Token
     public int? line;
     public int? column;
 
-    public Token(TokenType type, string value, int? line, int? column)
+    public Token(TokenType type, char value, int? line = null, int? column = null)
+    {
+        this.Type = type;
+        this.value = value.ToString();
+        this.line = line;
+        this.column = column;
+    }
+    public Token(TokenType type, string value, int? line = null, int? column = null)
     {
         this.Type = type;
         this.value = value;

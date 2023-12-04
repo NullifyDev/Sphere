@@ -1,262 +1,189 @@
-﻿using System.Drawing;
-using System.Runtime.CompilerServices;
-using System.Collections.Generic;
-using Qbe.AST;
+﻿using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Runtime.InteropServices.JavaScript;
 
-namespace Qbe;
-
-using static Utils;
-using static Global;
-
+namespace Sphere;
 public class Parser
 {
-    private string File = "";
-    // public Parser(IEnumerable<Token> tokens)
-    // {
-    //     Global.Tokens = tokens;
-    // }
+    private string file = ""; 
+    public Token[] source;
+    private int curr = 0;
 
-    
-    public Parser(string file)
+    public Parser(string file, IEnumerable<Token> source)
     {
-        this.File = file;
-        // Global.Tokens = new Lexer(System.IO.File.ReadAllText(this.File).Replace("\r\n", "\n").Replace("\r", "\n")).Lex();
+        this.file = file;
+        this.source = source.ToArray();
     }
 
-    
-    
-    public void Output()
-    {
-        int curr = 0;
-        var lex = new Lexer(System.IO.File.ReadAllText(this.File).Replace("\r\n", "\n").Replace("\r", "\n")).Lex();
-        while (curr > lex.Count())
-        {
-            var tok = Peek();
-            Utils.Outln($"[{Peek().line}:{tok.column}]: {tok.Type} | {tok.value}");
-            lex.GetEnumerator().MoveNext();
+    public IEnumerable<AST.Node> Parse() {
+        while (NotAtEnd())
+            yield return GetInstruction();
+    }
+
+    public bool AtEnd(int curr) => curr >= this.source.Count();
+    private bool  NotAtEnd(int ahead = 0) => curr + ahead < this.source.Count();
+    private Token Peek    (int ahead = 0) => this.NotAtEnd(ahead) ? this.source[curr + ahead] : new Token(TokenType.EOF, "");
+    private bool Expect(Token token, int ahead = 0) => this.Peek(ahead).Type == token.Type;
+    private bool Expect(TokenType type, int ahead = 0) => this.Peek(ahead).Type == type;
+    private Token Next () {
+        if (NotAtEnd()) {
+            curr++;
+            return this.Peek();
         }
-        // foreach(var tok in Tokens)
-        // {
-        //     Utils.Outln($"[{tok.line}:{tok.column}]: {tok.Type} | {tok.value}");
-        // }
+        return new Token(TokenType.EOF, "");
     }
-    
-    public void run()
+    private AST.Node GetInstruction()
     {
-        var lex = new Lexer(this.File);
-        Global.Tokens = lex.Lex();
-        while (lex.NotAtEnd())
+        while (Expect(TokenType.EOL)) Next();
+        var instruction = this.Peek();
+        switch (this.Peek().Type)
         {
-            string instruction = "";
-            List<Token> values = new();
+            case TokenType.EOL:
+                Next();
+                break;
+            case TokenType.Object:
+                var obj = this.Peek();
+                string name = obj.value.Remove(0, 1);
+                Next();
+                if (Expect(TokenType.LParen))
+                    return new AST.Node(CreateFunction(name), obj.line, obj.column);
 
-            for (int i = 0; i < Global.Tokens.Count(); i++)
-            {
-                var tok = Peek();
-                switch (tok.Type)
-                {
-                    case TokenType.PtrUp:
-                    case TokenType.PtrDown:
-                    case TokenType.IncrAddr:
-                    case TokenType.DecrAddr:
-                        if (values.Count > 0)
-                        {
-                            new ASTNodes().Instructions.Add(new(instruction, values));
-                            instruction = "";
-                            values.Clear();
-                        }
+                if (!AST.Variables.ContainsKey(obj.value.Remove(0, 1)))
+                    AST.Variables.Add(obj.value.Remove(0, 1), new AST.Variable(Peek()));
 
-                        if (i + 1 >= Tokens.Count()) new ASTNodes().Instructions.Add(new(instruction));
-                        else
-                        {
-                            if (instruction == "") instruction = tok.Type.ToString();
-                            else
-                            {
-                                new ASTNodes().Instructions.Add(new(instruction));
-                                instruction = "";
-                            }
-                        }
+                break;
+            case TokenType.Pragma:
+                Pragma();
+                break;
+            case TokenType.PrintOut:
+            case TokenType.PrintOutln:
+                return Print();
+            case TokenType.EOF: break;
+            default:
+                Error.Add(new(ErrorType.Syntax, file,
+                    $"No such instruction like \"{instruction.value}\"", instruction.line,
+                    instruction.column));
+                Error.DumpErrors();
+                break;
+        }
 
-                        continue;
-                    default:
-                        switch (instruction)
-                        {
-                            case "PtrUp":
-                            case "PtrDown":
-                            case "IncrAddr":
-                            case "DecrAddr":
-                                values.Add(tok);
-                                continue;
-                        }
+        this.Next();
+        return new AST.Node(AST.Type.EOF, Peek().line, Peek().column);
+    }
+    private AST.Pragma? Pragma() {
+        int? line = this.Next().line;
 
-                        continue;
-                }
+        TokenType type;
+        string property;
+        object value;
+    
+        while (this.Next().line == line) {
+            TokenType tok = this.Peek().Type;
+            switch (tok) {
+                case TokenType.Config: return new(tok, 
+                    Next().value.ToString(), 
+                    this.Next().value
+                );
+                default: 
+                    Utils.Outln($"[Parser.Pragma()]: \"{this.Peek().Type}\" is either unknown or not yet implemented.");
+                    break;
             }
         }
-        // foreach (var x in Global.Tokens)
-        // {
-        //     Outln($"Line: {x.line} | Column: {x.column} | Type: {x.Type} | Value: {x.value} | Length: {x.value.ToString().Length}");
-        // }
+        return null;
     }
-
-    public Global.ASTNodes Parse()
+    private AST.Function CreateFunction(string name)
     {
-        Outln($"[Parser]");
-        Global.ASTNodes ast = new();
-        var Tokens = Global.Tokens;
-        var showAST = true;
-        while (curr < Tokens.Count() && Peek().Type != TokenType.EOF)
+        Dictionary<string, AST.Variable> parameters = new();
+        AST.Type returnType = AST.Type.Void;
+        List<AST.Node> body = new();
+        
+        Next();
+        while (!Expect(TokenType.RParen))
         {
-            /*string instruction = "";
-            List<Token> values = new();
-
-            for (int i = 0; i < Tokens.Count(); i++)
+            if (Expect(TokenType.Colon, 1))
             {
-                var tok = Peek();
-                switch (tok.Type)
-                {
-                    case TokenType.PtrUp:
-                    case TokenType.PtrDown:
-                    case TokenType.IncrAddr:
-                    case TokenType.DecrAddr:
-                        if (values.Count > 0)
-                        {
-                            new ASTNodes().Instructions.Add(new(instruction, values));
-                            instruction = "";
-                            values.Clear();
-                        }
-
-                        if (i + 1 >= Tokens.Count()) new ASTNodes().Instructions.Add(new(instruction));
-                        else
-                        {
-                            if (instruction == "") instruction = tok.Type.ToString();
-                            else
-                            {
-                                new ASTNodes().Instructions.Add(new(instruction));
-                                instruction = "";
-                            }
-                        }
-
-                        continue;
-                    default:
-                        switch (instruction)
-                        {
-                            case "PtrUp":
-                            case "PtrDown":
-                            case "IncrAddr":
-                            case "DecrAddr":
-                                values.Add(tok);
-                                continue;
-                        }
-
-                        continue;
-                }
-            }*/
+                Next();
+                parameters.Add(Peek(-1).value, new AST.Variable(Peek(1).value));
+            }
+            else parameters.Add(Peek().value, new AST.Variable(this.Peek(), true));
+            Next();
         }
-        return ast;
-    }
-    
-    public Token Poll()
-    {
-        var enumerator = Global.Tokens.GetEnumerator();
-        if (enumerator.MoveNext())
+        Next();
+        if (Expect(TokenType.Colon))
         {
-            return enumerator.Current;
+            Next();
+            returnType = this.Peek().value switch
+            {
+                "str" => AST.Type.String,
+                "int" => AST.Type.Int,
+                "bit" => AST.Type.Bit,
+                "*"   => AST.Type.Any,
+                 _    => AST.Type.Void
+            };
         }
 
-        return null; // No more tokens
-    }
-
-
-    public Token Peek()
-    {
-        // Create a copy of the current position to restore it later
-        int currentPosition = curr;
-
-        // Get the next token without advancing the position
-        Token peekedToken = Global.Tokens.FirstOrDefault();
-
-        // Restore the original position
-        curr = currentPosition;
-
-        return peekedToken;
-
-        return null; // No more tokens
-    }   
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
- /*var x = Global.Tokens[Global.curr];
-            switch (x.Type)
+        Next();
+        if (Expect(TokenType.LBrace))
+        {
+            Next();
+            while (!Expect(TokenType.RBrace))
             {
-                case TokenType.PtrDown:
-                case TokenType.PtrUp:
-                case TokenType.IncrAddr:
-                case TokenType.DecrAddr:
-                    var inst = new Instruction(x.line, x.column).Parse();
-                    
-                    // debugging
-                    Out($"Instruction:          ".Remove(13, inst.instruction.Length)
-                        .Insert(13, inst.instruction) + "| Value: ");
-                    if (inst.Values.Count > 0) 
-                        foreach (var y in inst.Values)
-                        {
-                            Outln($"{y.value}\n");
-                        }
-                    else Outln();
+                body.Add(this.GetInstruction());
+                Next();
+            }
+            Next();
+        }
 
-                    ast.AddNode(inst);
-                    break;
-               case TokenType.mlCommentL:
-                    while (++Global.curr < Global.Tokens.Count && Global.Tokens[Global.curr].Type == TokenType.mlCommentR)
-                        if (Global.Tokens[Global.curr].Type == TokenType.EOF) LangErr(Global.Tokens[Global.curr], "Trailing Multi-Line Comment. Please add \"#>\" anywhere after \"<#\"");
-                    break;
+        return new AST.Function(name, returnType, parameters, body);
+    }
+    private AST.Node Print()
+    {
+        Token inst = this.Peek();
+        int? line = this.Peek().line;
+        this.Next();
+        string text = "";
+        while (this.Peek().line == line)
+        {
+            if (Expect(TokenType.Call))
+            {
+                var args = new List<object>();
+                var vars = new Dictionary<string, AST.Variable>();
+                var name = Peek();
+                if (!AST.Functions.ContainsKey(name.value))
+                    Error.Add(new Error(ErrorType.Syntax, this.file, $"Unidentified function named '{name.value}' cannot be called", name.line, name.column));
                 
-                case TokenType.slComment:
-                    while (++Global.curr < Global.Tokens.Count && Global.Tokens[Global.curr].Type != TokenType.EOL) continue; 
-                    break;
-                
-                case TokenType.Input:
-                case TokenType.InputLine:
-                case TokenType.PrintOut:
-                case TokenType.PrintOutln:
-                    ast.AddNode(new Instruction(x.line, x.column).Parse());
-                    break;
-                case TokenType.Call:
-                    ast.AddNode(new Instruction(x.line, x.column).Parse(ast.Functions));
-                    break;
-                case TokenType.Func:
-                    var func = new AST.Function().Parse();
-                    ast.AddNode(func);
-                    Outln($"func {func.name} {func.Parameters.Select(x => "[ " + x.Name+ ": " + x.Data.Type + ": " + x.Data.Value + " ]")}");
-                    break;
-                
-                default:
-                    switch (this.instruction)
+                Next();
+                while (!Expect(TokenType.RBracket)) {
+                    if (!Expect(TokenType.Colon, 1))
                     {
-                        case "PtrUp":
-                        case "PtrDown":
-                        case "IncrAddr":
-                        case "DecrAddr":
-                            var currTok = Tokens[i];
-                            if (currTok.Type == TokenType.NumLit) this.Values.Add(currTok);
-                            else Utils.LangErr(currTok, $"Expected Number Literate. Received: {currTok.value} as {currTok.Type.ToString()} ");
-                            continue;
-                        
+                        Next();
+                        vars.Add(Peek(-1).value, new AST.Variable(Peek(1).Type));
                     }
-                    break;
+                }
+                var invoke = new AST.Node(new AST.Instruction(AST.Type.Call, vars), inst.line, inst.column);
             }
 
-            Global.curr++;*/
+            if (Expect(TokenType.EOL, 1) || !NotAtEnd(1))
+            {
+                text += $"{this.Peek().value}";
+                Next();
+                break;
+            }
+            if (!this.Expect(TokenType.Plus))
+            {
+                text += $"{this.Peek().value} ";
+                Next();
+                continue;
+            }
+
+            text = text.Remove(text.Length - 2, 1);
+            this.Next();
+        }
+
+        var tok = new Token(TokenType.StringLit, text, this.Peek().line, this.Peek().column);
+        return inst.Type == TokenType.PrintOutln
+            ? new AST.Node(new AST.Instruction(AST.Type.Outln, tok), inst.line, inst.column)
+            : new AST.Node(new AST.Instruction(AST.Type.Out,   tok), inst.line, inst.column);
+    }
+}

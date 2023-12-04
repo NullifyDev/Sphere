@@ -1,6 +1,4 @@
-﻿using OneOf.Types;
-
-namespace Sphere;
+﻿namespace Sphere.Compiler;
 
 public class Transpiler
 {
@@ -9,6 +7,7 @@ public class Transpiler
     private int curr = 0;
     private AST.Node node => this.ast[curr];
     private string result = "";
+    private List<AST.Pragma> Pragmas;
     public Transpiler(string file, AST.Node[] ast)
     {
         this.file = file;
@@ -17,57 +16,64 @@ public class Transpiler
 
     public void Transpile()
     {
-        while (this.NotAtEnd())
-            result += this.run(node);
 
-        Code.Add(this.file, result);
+        while (this.NotAtEnd())
+        {
+            result += this.run(node);
+            curr++;
+        }
+        Code.Add(Pragmas, this.file, result);
     }
 
     private string run(AST.Node node) {
         switch (node.Value)
         {
             case AST.Function:
-                if (AST.Functions.ContainsKey((node.Value as AST.Function).Name))
+                var func = (node.Value as AST.Function);
+                if (AST.Functions.ContainsKey((func!).Name))
                 {
-                    if (AST.Functions[(node.Value as AST.Function).Name].Parameters
-                            .Values == (node.Value as AST.Function).Parameters.Values)
+                    if (AST.Functions[func.Name].Parameters
+                            .Values == func.Parameters.Values)
                         Error.Add(new Error(ErrorType.Syntax, file,
-                            $"Function '{(node.Value as AST.Function).Name}' already exists",
+                            $"Function '{func.Name}' already exists",
                             node.Line, node.Column));
                 }
-
-                var func = node.Value as AST.Function;
                 string parameters = "";
                 foreach (var p in func.Parameters)
                 {
                     parameters += p.Value.Type switch
                     {
-                        AST.Type.String => "char *",
-                        AST.Type.Bit => "bool",
-                        AST.Type.Void => "void",
-                        AST.Type.Int => "int"
+                        AST.Type.String => p.Key == "*" ? $"char * wildcard, " : $"char * {p.Key}, ",
+                        AST.Type.Bit => p.Key == "*" ? $"bool[] wildcard, " : $"bool {p.Key}, ",
+                        AST.Type.Int => p.Key == "*" ? $"int[] wildcard, " : $"int {p.Key}, ",
+                        _            => p.Key == "*" ? $"char * wildcard, " : $"int {p.Key}, "
                     };
-                    parameters += $" {p.Key}, ";
                 }
 
                 if (parameters.Length > 0)
-                    parameters.Remove(parameters.Length - 2, 2);
+                    parameters = parameters.Remove(parameters.Length - 2, 2);
 
                 string instructions = "";
-                foreach(var n in func.Body)
-                    instructions += this.run(n) + '\n';
-                    
-                result += @$"{func.ReturnType} {func.Name}({parameters}) {{
-                    {instructions}
-                }}";
+                foreach (var n in func.Body)
+                    instructions += $"\t{this.run(n)}";
+
+                result += $"{func.ReturnType.ToString().ToLower()} {func.Name}({parameters}) {{\n{instructions}}}\n";
                 return result;
-            case AST.Instruction: return ParseInstruction(node.Value as AST.Instruction);
+            case AST.Instruction: 
+                return this.ParseInstruction((node.Value as AST.Instruction)!);
             
             case AST.Variable:
             case AST.Vector: 
                 break;
+
+            case "EOF": return result;
             default:
-                throw new ArgumentOutOfRangeException();
+                if (node.Value.ToString() == "EOF")
+                    return "";
+
+                Utils.Outln($"Uuhhhh... {node.Value}");
+                //throw new ArgumentOutOfRangeException();
+                break;
         }
 
         return "";
@@ -79,18 +85,11 @@ public class Transpiler
         {
             case AST.Type.Out:
             case AST.Type.Outln:
-                return inst.Type == AST.Type.Outln ? $"{(inst.Args as Token).value}\n" : $"(inst.Args as Token).value";
+                return inst.Type == AST.Type.Outln ? $"printf(\"{((inst.Args as Token)!).value}\\n\");\n" : $"printf(\"{((inst.Args as Token)!).value}\");\n";
         }
 
         return "";
     }
 
     public bool NotAtEnd() => curr < this.ast.Count();
-    private void Write()
-    {
-        File.WriteAllText("imports.h", "#ifndef imports \n#define imports\n\n#include <stdio.h>\n\n#endif");
-        foreach (var c in Code.Codes)
-            File.AppendAllText(c.name,  c.content);
-    }
 }
-

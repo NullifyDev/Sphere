@@ -1,8 +1,12 @@
 #folders
 .idea/
+.git/
+.vscode/
 obj/
 bin/
+output/
 
 #files
 .gitignore
 *.bat
+.fake

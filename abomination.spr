@@ -1,0 +1,4 @@
+$yes "long math_f() {\n"
+for 0 16384 $i: $yes += "\tint v_"+i+" = "+i+";\n"
+yes += "return"
+for 0 16384 $i: $yes += "v_"+i+"}; } \n\nvoid main() {\n\tprintf(math_f());\n\treturn 0;)\n}"

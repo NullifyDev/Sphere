@@ -1,0 +1,4 @@
+$str ""
+$main (*): int { 
+    outln "Hello, World!"
+}
