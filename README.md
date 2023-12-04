@@ -1,11 +1,13 @@
-<img src="Qbe.png" style="align-items: center" width="150"/>
-
-# Qbe
+<p align="center">
+    <img src="Sphere.png" width="200"/>
+    <h1 align="center"><b>Sphere</b></h1>
+</p>
+# Sphere
 This is a minimalistic language, designed to be simple to understand and utilize.
 The language has a library named "ExtraKeys" to further aid the programmer without touching any of the pointer things.
 
 ### Official Modules
-ExtraKeys - ExtraKeys is a library that adds functions and keywords like `for` and `while` to the langugae to further ease the development of some, making Qbe feel like it is "High-Level" when it isnt.
+ExtraKeys - ExtraKeys is a library that adds functions and keywords like `for` and `while` to the langugae to further ease the development of some, making Sphere feel like it is "High-Level" when it isnt.
 
 
 ### Data Types
