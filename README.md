@@ -5,6 +5,29 @@
 Sphere is a minimalistic language, designed to be simple to write, understand and utilize.
 The language has a library named "High Level Macros" to further aid the programmer without manual memory manipulation.
 
+### Example
+```php
+# this is a single-line comment
+
+# create label str that sets the string's chars into their own addresses.
+# and set the first to the 0th address (0th is the length. But the 1st char
+# is the 1st (0x1) from 0th (0x0))
+str = "Hello World!" @ 0x0
+
+# starting function (otherwise, it will check for a function call within the file outside of all scopes)
+main(): int {
+    outln $str    # Print the values (from first to last address)
+    outln str     # Print the variable-properties (label/label-properties)
+}
+
+Output:
+ > Hello, World!
+ > 
+   Name: "str"
+   Type: string
+   Address: 0x0 (0)
+   Length: 0xE (14)
+```
 ### Official Modules
 HLM (High Level Macros) - HLM is a macro collection that adds functions and keywords like `for` and `while` to the language to further ease the development for some peolpe, making Sphere feel like a high-level language, when in reality, it's very low-level. 
 
