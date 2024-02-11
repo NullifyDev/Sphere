@@ -11,8 +11,8 @@ The language has a library named "High Level Macros" to further aid the programm
 
 # create label str that sets the string's chars into their own addresses.
 # and set the first to the 0th address (0th is the length. But the 1st char
-# is the 1st (0x1) from 0th (0x0))
-str = "Hello World!" @ 0x0
+# is the 1st from 0th)
+str = "Hello World!" @ 0
 
 # starting function (otherwise, it will check for a function call within the file outside of all scopes)
 main(): int {
