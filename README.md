@@ -74,5 +74,7 @@ This project is cross-platform. This being that the designed support of this lan
 
 <br>
 <br>
-
-¹ - In the language, these variable looking things are named as "Labels" because they label a certain segment of the memory, allowing the user and the computer to understand how to treat them.
+<br>
+```
+¹ - In the language, these variable looking things are named as "Labels" because they label a certain segment of the memory, allowing the user and the computer to understand what and how to treat them.
+````
