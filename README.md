@@ -43,7 +43,7 @@ __Do Note:__ A name of an (official) external module will be in brackets `()` to
 |-----------|---------------------------------------------------------------------------------------------------------------|
 | `@<var>`  | Address/position of the specified Label *¹                                                                      |
 | `$<var>`  | Value of the specified Lbael from its position to the length from said position.                                |
-| `<var>`   | Returns/creates specified label about a segment of memory along side of how to treat it (labels can overlap |
+| `<var>`   | Returns/creates specified label about a segment of memory along side of how to treat it (labels can overlap) |
 
 ### Instructions
 
