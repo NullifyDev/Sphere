@@ -38,16 +38,17 @@ __Do Note:__ A name of an (official) external module will be in brackets `()` to
 
 ### Reference Operators
 | Handle    | Description                   |
-|-----------|-------------------------------|
-| `@<var>`  | Address of the given variable |
-| `$<var>`  | Value of the given variable   |
+|-----------|---------------------------------------------------------------------------------------------------------------|
+| `@<var>`  | Address/position of the specified Label *¹                                                                      |
+| `$<var>`  | Value of the specified Lbael from its position to the length from said position.                                |
+| `<var>`   | Returns/creates specified label about a segment of memory along side of how to treat it (labels can overlap |
 
 ### Instructions
 
 | Command and `<arguments>` | Description                                                             |
 |---------------------------|-------------------------------------------------------------------------|
-| `up <bin>`                | Move up by the given amount. Default Value: 1                           |
-| `down <bin>`              | Move down by the given amount. Default Value: 1                         |
+| `up   <int>`              | Move up by the given amount. Default Value: 1                           |
+| `down <int>`              | Move down by the given amount. Default Value: 1                         |
 | `incr <int>`              | Increment current address by the given amount. Default value: 1         |
 | `decr <int>`              | Decrement current address by the given amount. Default value: 1         |
 | `func identifier (any)`   | Function with name with any arguments and argument types                |
@@ -70,3 +71,8 @@ This project is cross-platform. This being that the designed support of this lan
  - IDE (SphereIDE)
  - VM (VirtualGlobe)
  - OS (RollOS)
+
+
+
+
+¹ - In the language, these variable looking things are named as "Labels" because they label a certain segment of the memory, allowing the user and the computer to understand how to treat them.
