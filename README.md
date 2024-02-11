@@ -26,7 +26,7 @@ Output:
    Name: "str"
    Type: string
    Address: 0 (0x0123abcd)
-   Length: 14
+   Length: 13
 ```
 
 
