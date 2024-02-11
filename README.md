@@ -25,9 +25,11 @@ Output:
  > 
    Name: "str"
    Type: string
-   Address: 0x0 (0)
-   Length: 0xE (14)
+   Address: 0 (0x0123abcd)
+   Length: 14
 ```
+
+
 ### Official Modules
 HLM (High Level Macros) - HLM is a macro collection that adds functions and keywords like `for` and `while` to the language to further ease the development for some peolpe, making Sphere feel like a high-level language, when in reality, it's very low-level. 
 
