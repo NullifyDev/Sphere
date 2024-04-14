@@ -2,80 +2,41 @@
     <img src="Sphere.png" width="200"/>
     <h1 align="center"><b>Sphere</b></h1>
 </p>
-Sphere is a minimalistic language, designed to be simple to write, understand and utilize.
-The language has a library named "High Level Macros" to further aid the programmer without manual memory manipulation.
 
-### Example
-```php
-# this is a single-line comment
+Sphere is a minimalistic language designed for both software and Operating System Development. <br>
+The language syntax is designed to balance readability and writability by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings. <br><br>
+This language uses Freestanding-compatible C/C++ code to minimize the amount of refactoring reuqired to get Sphere-written projects to run on both with and without an environment.<br>
+<br>
+<br>
 
-# create label str that sets the string's chars into their own addresses.
-# and set the first to the 0th address (0th is the length. But the 1st char
-# is the 1st from 0th)
-str = "Hello World!" @ 0
+### Identifier Prefixes
+| Handle      | Description                                       |
+|-------------|---------------------------------------------------|
+| `$<object>` | Gets or sets the value of the specified object    |
+| `@<object>` | Gets or sets the address of the specified object. |
 
-# starting function (otherwise, it will check for a function call within the file outside of all scopes)
-main(): int {
-    outln $str    # Print the values (from first to last address)
-    outln str     # Print the variable-properties (label/label-properties)
-}
-
-Output:
- > Hello, World!
- > 
-   Name: "str"
-   Type: string
-   Address: 0 (0x0123abcd)
-   Length: 13
-```
-
-
-### Official Modules
-HLM (High Level Macros) - HLM is a macro collection that adds functions and keywords like `for` and `while` to the language to further ease the development for some peolpe, making Sphere feel like a high-level language, when in reality, it's very low-level. 
-
-
-### Data Types
-__Do Note:__ A name of an (official) external module will be in brackets `()` to indicate what module something exists in.
-
-
-### Reference Operators
-| Handle    | Description                   |
-|-----------|---------------------------------------------------------------------------------------------------------------|
-| `@<var>`  | Address/position of the specified Label *¹                                                                      |
-| `$<var>`  | Value of the specified Lbael from its position to the length from said position.                                |
-| `<var>`   | Returns/creates specified label about a segment of memory along side of how to treat it (labels can overlap) |
-
+[Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
+<br><br>
 ### Instructions
+| Command and `<arguments>`           | Description                                                             |
+|-------------------------------------|-------------------------------------------------------------------------|
+| `mov <object> <int>`                | Move the object by signed number of addresses                           | 
+| `incr <int>`                        | Increment current address by the given amount                           |
+| `decr <int>`                        | Decrement current address by the given amount                           |
+| `<string>(): <DataType>`            | Function with name as string with one argument                          |
+| `out <arsg>`                        | Print all arguments before EOL without line break.                      |
+| `outln <args>`                      | Print all arguments before EOL with line break.                         |
+| `if <Condition> { <instructions> }` | Executes Instructions when condition returns true                       |
 
-| Command and `<arguments>` | Description                                                             |
-|---------------------------|-------------------------------------------------------------------------|
-| `up   <int>`              | Move up by the given amount. Default Value: 1                           |
-| `down <int>`              | Move down by the given amount. Default Value: 1                         |
-| `incr <int>`              | Increment current address by the given amount. Default value: 1         |
-| `decr <int>`              | Decrement current address by the given amount. Default value: 1         |
-| `func identifier (any)`   | Function with name with any arguments and argument types                |
+[Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
+<br><br>
 
-<br>
+### Support
+Any operating systems that support LLVM and `clang` will be immediately supported.
 
-## Support
-This project is cross-platform. This being that the designed support of this language is x86 and ARM native. If the language lives a long life, it may indefinately receive RISC-V and/or CISC architecture support.  
-
-### x86 Architecture
-- [x] Linux
-- [x] Windows
-- [x] MacOS
-
-### ARM Architecture
- - [ ] Android
- - [ ] iOS
-
-## Indefinate Sphere FOSS 
- - IDE (SphereIDE)
- - VM (VirtualGlobe)
- - OS (RollOS)
-
-<br>
-<br>
-<br>
-
-¹ - In the language, these variable looking things are named as "Labels" because they label a certain segment of the memory, allowing the user and the computer to understand what and how to treat them.
+### Indefinate Softawre
+Here are some of the software that are under consideration of development using Sphere as the language
+ - [ ] Petroglyph IDE
+ - [ ] Boulder Package Manager
+ - [ ] RollOS
+ - [ ] Asciigine (Console/Terminal based Game Engine with Ascii graphics)
