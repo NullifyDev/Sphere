@@ -18,7 +18,7 @@ This language uses Freestanding-compatible C/C++ code to minimize the amount of 
 [Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
 <br><br>
 ### Instructions
-| Command and `<arguments>`           | Description                                                             |
+| Instructions and Arguments          | Description                                                             |
 |-------------------------------------|-------------------------------------------------------------------------|
 | `mov <object> <int>`                | Move the object by signed number of addresses                           | 
 | `incr <int>`                        | Increment current address by the given amount                           |
