@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sphere", "Sphere.csproj", "{1F237C42-341B-4437-A828-EB3EE64CA265}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F237C42-341B-4437-A828-EB3EE64CA265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F237C42-341B-4437-A828-EB3EE64CA265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F237C42-341B-4437-A828-EB3EE64CA265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F237C42-341B-4437-A828-EB3EE64CA265}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ACB98CD2-DB9A-4141-811B-78E9FCEEA149}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,64 @@
+# Lexer for Sphere language
+# Written by github.com/megabytesofrem (Abby)
+
+Token: struct {
+    ty: TokenType,
+    value: string
+}
+
+TokenType: enum {
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    LParen,
+    RParen,
+    LSquare,
+    RSquare,
+    LCurly,
+    RCurly,
+}
+
+Lexer: struct {
+    Lexer(input: string) {
+        $.input = input
+        $.position = 0
+        $.current_char = self.input[self.position]
+    }
+    input: string,
+    position: int,
+    current_char: string
+}
+
+lex_one(l: Lexer): Token {
+    switch l.current_char {
+        case '+' => new Token(ty: TokenType.Plus, value: '+')
+        case '-' => new Token(ty: TokenType.Minus, value: '-')
+        case '*' => new Token(ty: TokenType.Star, value: '*')
+        case '/' => new Token(ty: TokenType.Slash, value: '/')
+        case '(' => new Token(ty: TokenType.LParen, value: '(')
+        case ')' => new Token(ty: TokenType.RParen, value: ')')
+        case '[' => new Token(ty: TokenType.LSquare, value: '[')
+        case ']' => new Token(ty: TokenType.RSquare, value: ']')
+        case '{' => new Token(ty: TokenType.LCurly, value: '{')
+        case '}' => new Token(ty: TokenType.RCurly, value: '}')
+        default  => new Token(ty: TokenType.EOF, value: '')
+    }
+}
+
+peek(l: Lexer): char {
+    if l.position + 1 > len(l.input) - 1 {
+        ret null
+    } else {
+        ret l.input[l.position + 1]
+    }
+}
+
+advance(l: Lexer): char {
+    l.position += 1
+    if l.position > len(l.input) - 1 {
+        l.current_char = null
+    } else {
+        l.current_char = l.input[l.position]
+    }
+}

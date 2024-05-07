@@ -1,0 +1,61 @@
+ #> Explanations:
+ #   - "currchar: string @ @input" just means: string variable named "currchar" at the location of variable named "input"
+ #   - "| len = 1" just sets a property of len (length) to 1 where "|" tells the compiler that a property is being set 
+ #     it is differenciated betewen Bitwise Or and Property Definition/Assignment based on its Left-Hand-Side type check (wether LHS is an Identifier or not)
+ #             
+ # 
+ # Fun Fact: Sphere was first conceptualized as a language named "Hellmo" - A language inspired by Brainfuck and Assembly. 
+ #           The language was going to be written purely from hex numbers which then later on became Sphere.
+ #           Hellmo: https://github.com/NullifyDev/Hellmo 
+<#
+
+# COMPILATION CONDITION GUARD(S)
+# Tells the compiler "if Sphere is earlier than v1.1, return (do not run)"
+Sphere { 
+    if Sphere.Version > 1.1: ret 
+}
+
+main(args) { # function with wildcard varible (morphs into what gets assigned to it)
+    $inpterp("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
+}
+
+tape: string
+i, loop: int | unsigned
+
+interp(input: string) {
+    currchar: string @ @input | len = 1     # sets currchar to the address of input (first/0th index)
+    for 0 input.len i {
+        $currchar = $input[$i]              # sets value of currchar to the value of input, indexed by the value of i
+        switch currchar {
+            case '>' => mov ptr 1
+            case '<' => mov ptr -1
+            case '+' => incr ptr
+            case '-' => decr ptr
+            case '.' => out $ptr 
+            case ',' => $ptr = in
+            case '[' {
+                if $ptr == 0 {  
+                    $loop = 1
+                    for $loop > 0 {
+                        incr i
+                        currchar = $input[$i]
+                          if currchar == '[': incr loop
+                        elif currchar == ']': decr loop
+                    }  
+                }
+            }
+            case ']' {
+                if $ptr {                   # check if value of ptr is not null
+                    $loop = 1
+                    for loop > 0 {
+                        decr i
+                        currchar = $input[$i]
+                          if currchar == '[': decr loop
+                        elif currchar == ']': incr loop
+                    }
+                }  
+            }
+        }
+    }
+}
+

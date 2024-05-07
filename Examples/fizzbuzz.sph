@@ -1,0 +1,12 @@
+#> Explanations:
+  "$i % 3" is the same as "$i % 3 == 0" - Without specifying what number mod should return, you are asking it to check for 0 by default 
+<#
+
+main() {
+    for 0 100 i {
+          if $i % 3 && $i % 5: outln "FizzBuzz"
+        elif $i % 3: outln "Fizz"
+        elif $i % 5: outln "Buzz"
+        else       : outln $i
+    }
+}

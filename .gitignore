@@ -1,0 +1,10 @@
+obj/
+bin/
+asm/
+Properties/
+.vscode/
+.vs/
+self-host/
+test.sph
+To Implement.txt
+test.sph
