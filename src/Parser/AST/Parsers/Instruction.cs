@@ -8,12 +8,15 @@ public partial record Parser
 {
     private ExprNode[] GetInstArgs()
     {
+        // ExprNode? lastNode = null;
         List<ExprNode> args = new();
         while (Next()?.Kind != TokenKind.EOL && Peek()?.Kind != TokenKind.EOF)
         {
             var node = this.ParseOne(Peek());
-            if (node is not Expressions.EOF && node is not Expressions.EOL)
-                args.Add(node!);
+            if (node is Expressions.EOF || node is Expressions.EOL) break;
+
+            CurrNode = node;
+            args.Add(node!);
         }
         return args.ToArray();
     }
@@ -23,17 +26,17 @@ public partial record Parser
     {
         ExprNode[] args = GetInstArgs();
 
-        if (args[0] is not Expressions.Identifier) throw new Exception($"Expected Identifier but got {args[0].GetType().Name}");
+        if (args[0] is not Expressions.Identifier) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
         if ((args[0] as Expressions.Identifier)!.Name == "" ||
-            (args[0] as Expressions.Identifier)!.Name == null) throw new Exception($"Expected Identifier but got {args[0].GetType().Name}");
+            (args[0] as Expressions.Identifier)!.Name == null) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
 
         if (args.Length == 2)
         {
-            if (args[1] is not Expressions.Literal) throw new Exception($"Expected IntLit but got {args[1].GetType().Name}");
-            if ((args[1] as Expressions.Literal)!.Type != LiteralType.Int) throw new Exception($"Expected IntLit but got {args[1].GetType().Name}");
-            return new Instructions.Mov((args[0] as Expressions.Identifier)!, Convert.ToInt64((args[1] as Expressions.Literal)!.Value ?? new Literal(TokenKind.IntLit, 1)));
+            if (args[1] is not Expressions.Literal) Utils.Error($"Expected IntLit but got {args[1].GetType().Name}");
+            if ((args[1] as Expressions.Literal)!.Type != LiteralType.Int) Utils.Error($"Expected IntLit but got {args[1].GetType().Name}");
+            return new Instructions.Mov((args[0] as Expressions.Identifier)!, Convert.ToInt64((args[1] as Expressions.Literal)!.Value ?? new Literal(TokenKind.IntLit, 1, args[1].File, args[1].Line, args[1].Column)));
         }
-        return new Instructions.Mov((args[0] as Expressions.Identifier)!, Convert.ToInt64(new Literal(TokenKind.IntLit, 1).Value));
+        return new Instructions.Mov((args[0] as Expressions.Identifier)!, Convert.ToInt64(new Literal(TokenKind.IntLit, 1, args[1].File, args[1].Line, args[1].Column)));
     }
 
     // incr <identifier> <int>  # increment the object by <int>
@@ -41,17 +44,17 @@ public partial record Parser
     {
         ExprNode[] args = GetInstArgs();
 
-        if (args[0] is not Expressions.Identifier) throw new Exception($"Expected Identifier but got {args[0].GetType().Name}");
+        if (args[0] is not Expressions.Identifier) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
         if ((args[0] as Expressions.Identifier)!.Name == "" ||
-            (args[0] as Expressions.Identifier)!.Name == null) throw new Exception($"Expected Identifier but got {args[0].GetType().Name}");
+            (args[0] as Expressions.Identifier)!.Name == null) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
 
         if (args.Length == 2)
         {
-            if (args[1] is not Expressions.Literal) throw new Exception($"Expected IntLit but got {args[1].GetType().Name}");
-            if ((args[1] as Expressions.Literal)!.Type != LiteralType.Int) throw new Exception($"Expected IntLit but got {args[1].GetType().Name}");
-            return new Instructions.Incr((args[0] as Expressions.Identifier)!, Convert.ToInt64((args[1] as Expressions.Literal)!.Value ?? new Literal(TokenKind.IntLit, 1)));
+            if (args[1] is not Expressions.Literal) Utils.Error($"Expected IntLit but got {args[1].GetType().Name}");
+            if ((args[1] as Expressions.Literal)!.Type != LiteralType.Int) Utils.Error($"Expected IntLit but got {args[1].GetType().Name}");
+            return new Instructions.Incr((args[0] as Expressions.Identifier)!, Convert.ToInt64((args[1] as Expressions.Literal)!.Value ?? new Literal(TokenKind.IntLit, 1, args[1].File, args[1].Line, args[1].Column)));
         }
-        return new Instructions.Incr((args[0] as Expressions.Identifier)!, Convert.ToInt64(new Literal(TokenKind.IntLit, 1).Value));
+        return new Instructions.Incr((args[0] as Expressions.Identifier)!, Convert.ToInt64(new Literal(TokenKind.IntLit, 1, args[0].File, args[0].Line, args[0].Column).Value));
     }
 
     // decr <identifier> <int>  # decrement the object by <int>
@@ -59,17 +62,17 @@ public partial record Parser
     {
         ExprNode[] args = GetInstArgs();
 
-        if (args[0] is not Expressions.Identifier) throw new Exception($"Expected Identifier but got {args[0].GetType().Name}");
+        if (args[0] is not Expressions.Identifier) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
         if ((args[0] as Expressions.Identifier)!.Name == "" ||
-            (args[0] as Expressions.Identifier)!.Name == null) throw new Exception($"Expected Identifier but got {args[0].GetType().Name}");
+            (args[0] as Expressions.Identifier)!.Name == null) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
 
         if (args.Length == 2)
         {
-            if (args[1] is not Expressions.Literal) throw new Exception($"Expected IntLit but got {args[1].GetType().Name}");
-            if ((args[1] as Expressions.Literal)!.Type != LiteralType.Int) throw new Exception($"Expected IntLit but got {args[1].GetType().Name}");
-            return new Instructions.Decr((args[0] as Expressions.Identifier)!, Convert.ToInt64((args[1] as Expressions.Literal)!.Value ?? new Literal(TokenKind.IntLit, 1)));
+            if (args[1] is not Expressions.Literal) Utils.Error($"Expected IntLit but got {args[1].GetType().Name}");
+            if ((args[1] as Expressions.Literal)!.Type != LiteralType.Int) Utils.Error($"Expected IntLit but got {args[1].GetType().Name}");
+            return new Instructions.Decr((args[0] as Expressions.Identifier)!, Convert.ToInt64((args[1] as Expressions.Literal)!.Value ?? new Literal(TokenKind.IntLit, 1, args[1].File, args[1].Line, args[1].Column)));
         }
-        return new Instructions.Decr((args[0] as Expressions.Identifier)!, Convert.ToInt64(new Literal(TokenKind.IntLit, 1).Value));
+        return new Instructions.Decr((args[0] as Expressions.Identifier)!, Convert.ToInt64(new Literal(TokenKind.IntLit, 1, args[0].File, args[0].Line, args[0].Column).Value));
     }
 
     public InstNode ParseIn()
@@ -108,7 +111,7 @@ public partial record Parser
 
     public InstNode ParseFor()
     {
-        List<ExprNode> nodes = new();
+        CodeBlock nodes = new();
         ExprNode? start = null;
         ExprNode? end = null;
         ExprNode? Id = null;
@@ -137,33 +140,36 @@ public partial record Parser
         if (In == null && Next()?.Kind == TokenKind.Identifier)
         {
             Id = this.ParseOne()!;
-        } else if (In != null) { 
+        }
+        else if (In != null)
+        {
             // Next(); 
         }
-        else {
+        else
+        {
             Utils.Error("what?");
         }
 
         while (token.MoveNext() && Peek()?.Kind == TokenKind.EOL) ;
         while (token.MoveNext())
         {
-            if (Peek()?.Kind == TokenKind.RCurly) break;
-            while (this.token.MoveNext() && Peek().Kind != TokenKind.EOL && Peek().Kind != TokenKind.EOF)
+            if (Peek()?.Kind == TokenKind.RBrace) break;
+            while (Peek().Kind != TokenKind.EOL && Peek().Kind != TokenKind.EOF)
             {
                 CurrNode = this.ParseOne()!;
-                // Utils.Outln($"[()] {CurrNode.ToString()}");
-                if (!token.MoveNext()) break;
-                if (CurrNode is Expressions.Execute)
+                if (CurrNode == null) break;
+                // Utils.Outln($"[For.Body()] {CurrNode.ToString()}");
+                if (CurrNode is Expressions.Execute && CurrNode != null)
                 {
                     nodes.Add(CurrNode!);
-                    CurrNode = null;
                 }
+
             }
-            nodes.Add(CurrNode!);
+            // nodes.Add(CurrNode!);
         }
-        return In == null ? 
+        return In == null ?
             new Instructions.For(start!, end!, Id, nodes) :
-            new Instructions.For(In, nodes);
+            new Instructions.Foreach(In, nodes);
     }
 
     #region IfStatement
@@ -173,19 +179,23 @@ public partial record Parser
         Next();
         ExprNode Cond = this.ParseOne()!;
         CurrNode = Cond;
-        while (Next()?.Kind != TokenKind.LCurly)
+        while (Next()?.Kind != TokenKind.LBrace)
         {
             if (Peek()?.Kind == TokenKind.EOL) continue;
             Cond = this.ParseOne()!;
         }
-        // Expect(new TokenKind[] { TokenKind.LCurly, TokenKind.Colon });
+        // Expect(new TokenKind[] { TokenKind.RBrace, TokenKind.Colon });
         while (token.MoveNext() && Peek()?.Kind == TokenKind.EOL) ;
         ExprNode curr;
-        List<ExprNode?> nodes = new();
-        while (Peek()?.Kind != TokenKind.RCurly)
+        CodeBlock nodes = new();
+        while (Peek()?.Kind != TokenKind.RBrace)
         {
             Token tok = Peek()!;
-            if (tok.Kind == TokenKind.EOF || tok == null) continue;
+            if (tok.Kind == TokenKind.EOF || tok.Kind == TokenKind.EOL || tok == null)
+            {
+                Next();
+                continue;
+            }
             curr = this.ParseOne()!;
 
             if (curr is Expressions.EOL || curr is Expressions.EOF ||
@@ -201,18 +211,19 @@ public partial record Parser
     public InstNode ParseElif()
     {
         Next();
+        var t = Peek();
         ExprNode Cond = this.ParseOne()!;
         CurrNode = Cond;
-        while (Next()?.Kind != TokenKind.LCurly)
+        while (Next()?.Kind != TokenKind.LBrace)
         {
             if (Peek()?.Kind == TokenKind.EOL) continue;
             Cond = this.ParseOne()!;
         }
-        // Expect(new TokenKind[] { TokenKind.LCurly, TokenKind.Colon });
+        // Expect(new TokenKind[] { TokenKind.RBrace, TokenKind.Colon });
         while (token.MoveNext() && Peek()?.Kind == TokenKind.EOL) ;
         ExprNode curr;
-        List<ExprNode?> nodes = new();
-        while (Peek()?.Kind != TokenKind.RCurly)
+        CodeBlock nodes = new();
+        while (Peek()?.Kind != TokenKind.RBrace)
         {
             Token tok = Peek()!;
             if (tok.Kind == TokenKind.EOF || tok == null) continue;
@@ -225,29 +236,134 @@ public partial record Parser
             if (!token.MoveNext()) break;
         }
 
-        return new Instructions.Elif(Cond, nodes!);
+        return new Instructions.Elif(Cond, nodes!, t.File, t.Line, t.Column);
     }
 
     public InstNode ParseElse()
+    {
+        
+        ExprNode curr;
+        List<ExprNode?> nodes = new();
+        while (token.MoveNext() && Peek()?.Kind == TokenKind.EOL) ;
+        if (Peek()?.Kind == TokenKind.LBrace)
+        {
+            Next();
+            if (Peek()?.Kind != TokenKind.RBrace)
+            {
+                while (Peek()?.Kind != TokenKind.RBrace)
+                {
+                    Token tok = Peek()!;
+                    if (tok.Kind == TokenKind.EOF || tok == null) continue;
+                    curr = this.ParseOne()!;
+
+                    if (curr is Expressions.EOL || curr is Expressions.EOF ||
+                        !(curr is Expressions.Identifier))
+                        nodes.Add(curr);
+
+                    if (!token.MoveNext()) break;
+                    CurrNode = curr;
+                }
+            }
+        }
+        else
+        {
+            while (Peek()?.Kind != TokenKind.EOL && Peek()?.Kind != TokenKind.EOF)
+            {
+                Token tok = Peek()!;
+                if (tok.Kind == TokenKind.EOF || tok == null) continue;
+                curr = this.ParseOne()!;
+
+                if (curr is Expressions.EOL || curr is Expressions.EOF ||
+                    !(curr is Expressions.Identifier))
+                    nodes.Add(curr);
+
+                if (!token.MoveNext()) break;
+                CurrNode = curr;
+            }
+            if (CurrNode is Expressions.Execute)
+                if ((CurrNode as Expressions.Execute).Instruction is Instructions.If) 
+                    return new Instructions.Elif(((CurrNode as Expressions.Execute).Instruction as Instructions.If)!);
+        }
+
+        return new Instructions.Else(nodes!);
+    }
+
+    public List<ExprNode?> GetFunctionBody()
     {
         Next();
         while (token.MoveNext() && Peek()?.Kind == TokenKind.EOL) ;
         ExprNode curr;
         List<ExprNode?> nodes = new();
-        while (Peek()?.Kind != TokenKind.RCurly)
+        while (Peek()?.Kind != TokenKind.RBrace)
         {
             Token tok = Peek()!;
-            if (tok.Kind == TokenKind.EOF || tok == null) continue;
+            if (tok == null)
+            {
+                Next();
+                continue;
+            }
+
+            if (tok.Kind == TokenKind.EOF)
+            {
+                if (CurrNode != null)
+                    nodes.Add(CurrNode);
+                return nodes;
+            }
             curr = this.ParseOne()!;
 
-            if (curr is Expressions.EOL || curr is Expressions.EOF ||
-                !(curr is Expressions.Identifier))
-                nodes.Add(curr);
-
-            if (!token.MoveNext()) break;
+            if (curr is Expressions.EOL || curr is Expressions.EOF)
+            {
+                nodes.Add(CurrNode);
+                Next();
+                continue;
+            }
+            CurrNode = curr;
+            Next();
         }
 
-        return new Instructions.Else(nodes!);
+        return nodes;
+    }
+
+    public InstNode ParseSphere()
+    {
+        
+        
+        ExprNode curr;
+        List<ExprNode?> nodes = new();
+        if (Peek()?.Kind == TokenKind.LBrace)
+        {
+            while (token.MoveNext() && Peek()?.Kind == TokenKind.EOL) ;
+            while (Peek()?.Kind != TokenKind.RBrace)
+            {
+                Token tok = Peek()!;
+                if (tok.Kind == TokenKind.EOF || tok == null) continue;
+                curr = this.ParseOne()!;
+
+                if (curr is Expressions.EOL || curr is Expressions.EOF)
+                    nodes.Add(CurrNode);
+                else CurrNode = curr;
+                if (!token.MoveNext()) break;
+            }
+            return new Instructions.Sphere(nodes);
+        }
+        else
+        {
+            while (Peek()?.Kind != TokenKind.EOL && Peek()?.Kind != TokenKind.EOF)
+            {
+                Token tok = Peek()!;
+                if (tok.Kind == TokenKind.EOF || tok == null) continue;
+                curr = this.ParseOne()!;
+
+                if (curr is Expressions.EOL || curr is Expressions.EOF)
+                    nodes.Add(CurrNode);
+                else CurrNode = curr;
+
+                if (!token.MoveNext()) break;
+            }
+            return new Instructions.Sphereln(CurrNode);
+        }
+
+        return new Instructions.Sphere(new());
     }
 
     #endregion
@@ -265,6 +381,7 @@ public partial record Parser
         TokenKind.Elif => ParseElif(),
         TokenKind.Else => ParseElse(),
         TokenKind.For => ParseFor(),
+        TokenKind.Sphere => ParseSphere(),
         _ => throw new Exception($"Unexpected token {Peek()?.Kind}")
     };
 }

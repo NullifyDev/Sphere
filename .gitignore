@@ -7,4 +7,10 @@ Properties/
 self-host/
 test.sph
 To Implement.txt
+To Implement.complete.txt
 test.sph
+build
+run
+restore
+clean
+refresh

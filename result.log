@@ -1,0 +1,556 @@
+[
+    {
+        "Name": "Local Compilation Config (!SPHERE)",
+        "Instruction": {
+            "Block": [
+                {
+                    "Op": {
+                        "Kind": 15,
+                        "File": "test.sph",
+                        "Value": ":",
+                        "Line": 2,
+                        "Column": 27
+                    },
+                    "Left": {
+                        "Op": {
+                            "Kind": 12,
+                            "File": "test.sph",
+                            "Value": ".",
+                            "Line": 2,
+                            "Column": 20
+                        },
+                        "Left": {
+                            "Name": "OperatingSystem",
+                            "Prefix": null,
+                            "File": "test.sph",
+                            "Line": 2,
+                            "Column": 5
+                        },
+                        "Right": {
+                            "Name": "Target",
+                            "Prefix": null,
+                            "File": "test.sph",
+                            "Line": 2,
+                            "Column": 21
+                        },
+                        "File": "test.sph",
+                        "Line": 2,
+                        "Column": 20
+                    },
+                    "Right": {
+                        "Type": 0,
+                        "Value": "Linux",
+                        "File": "test.sph",
+                        "Line": 2,
+                        "Column": 29
+                    },
+                    "File": "test.sph",
+                    "Line": 2,
+                    "Column": 27
+                },
+                {
+                    "Op": {
+                        "Kind": 12,
+                        "File": "test.sph",
+                        "Value": ".",
+                        "Line": 3,
+                        "Column": 32
+                    },
+                    "Left": {
+                        "Op": {
+                            "Kind": 15,
+                            "File": "test.sph",
+                            "Value": ":",
+                            "Line": 3,
+                            "Column": 26
+                        },
+                        "Left": {
+                            "Op": {
+                                "Kind": 12,
+                                "File": "test.sph",
+                                "Value": ".",
+                                "Line": 3,
+                                "Column": 12
+                            },
+                            "Left": {
+                                "Name": "Default",
+                                "Prefix": null,
+                                "File": "test.sph",
+                                "Line": 3,
+                                "Column": 5
+                            },
+                            "Right": {
+                                "Name": "OperationMode",
+                                "Prefix": null,
+                                "File": "test.sph",
+                                "Line": 3,
+                                "Column": 13
+                            },
+                            "File": "test.sph",
+                            "Line": 3,
+                            "Column": 12
+                        },
+                        "Right": {
+                            "Name": "Mode",
+                            "Prefix": null,
+                            "File": "test.sph",
+                            "Line": 3,
+                            "Column": 28
+                        },
+                        "File": "test.sph",
+                        "Line": 3,
+                        "Column": 26
+                    },
+                    "Right": {
+                        "Name": "Unsafe",
+                        "Prefix": null,
+                        "File": "test.sph",
+                        "Line": 3,
+                        "Column": 33
+                    },
+                    "File": "test.sph",
+                    "Line": 3,
+                    "Column": 32
+                }
+            ],
+            "File": null,
+            "Line": 0,
+            "Column": 0
+        },
+        "File": null,
+        "Line": 0,
+        "Column": 0
+    },
+    {
+        "Name": "Local Compilation Config (!SPHERE)",
+        "Instruction": {
+            "Block": {
+                "Op": {
+                    "Kind": 12,
+                    "File": "test.sph",
+                    "Value": ".",
+                    "Line": 5,
+                    "Column": 36
+                },
+                "Left": {
+                    "Op": {
+                        "Kind": 15,
+                        "File": "test.sph",
+                        "Value": ":",
+                        "Line": 5,
+                        "Column": 30
+                    },
+                    "Left": {
+                        "Op": {
+                            "Kind": 12,
+                            "File": "test.sph",
+                            "Value": ".",
+                            "Line": 5,
+                            "Column": 16
+                        },
+                        "Left": {
+                            "Name": "Default",
+                            "Prefix": null,
+                            "File": "test.sph",
+                            "Line": 5,
+                            "Column": 9
+                        },
+                        "Right": {
+                            "Name": "OperationMode",
+                            "Prefix": null,
+                            "File": "test.sph",
+                            "Line": 5,
+                            "Column": 17
+                        },
+                        "File": "test.sph",
+                        "Line": 5,
+                        "Column": 16
+                    },
+                    "Right": {
+                        "Name": "Mode",
+                        "Prefix": null,
+                        "File": "test.sph",
+                        "Line": 5,
+                        "Column": 32
+                    },
+                    "File": "test.sph",
+                    "Line": 5,
+                    "Column": 30
+                },
+                "Right": {
+                    "Name": "Safe",
+                    "Prefix": null,
+                    "File": "test.sph",
+                    "Line": 5,
+                    "Column": 37
+                },
+                "File": "test.sph",
+                "Line": 5,
+                "Column": 36
+            },
+            "File": null,
+            "Line": 0,
+            "Column": 0
+        },
+        "File": null,
+        "Line": 0,
+        "Column": 0
+    },
+    {
+        "Name": "Function",
+        "Instruction": {
+            "File": null,
+            "Line": 0,
+            "Column": 0,
+            "name": {
+                "Name": "main",
+                "Prefix": null,
+                "File": "test.sph",
+                "Line": 6,
+                "Column": 1
+            },
+            "ReturnType": null,
+            "Params": [],
+            "Body": [
+                {
+                    "Name": "For",
+                    "Instruction": {
+                        "Start": {
+                            "Type": 1,
+                            "Value": "0",
+                            "File": "test.sph",
+                            "Line": 7,
+                            "Column": 9
+                        },
+                        "End": {
+                            "Type": 1,
+                            "Value": "100",
+                            "File": "test.sph",
+                            "Line": 7,
+                            "Column": 11
+                        },
+                        "Id": {
+                            "Name": "i",
+                            "Prefix": null,
+                            "File": "test.sph",
+                            "Line": 7,
+                            "Column": 15
+                        },
+                        "Block": {
+                            "Block": [
+                                {
+                                    "Name": "If",
+                                    "Instruction": {
+                                        "File": null,
+                                        "Line": 0,
+                                        "Column": 0,
+                                        "Cond": {
+                                            "Op": {
+                                                "Kind": 20,
+                                                "File": "test.sph",
+                                                "Value": "%",
+                                                "Line": 8,
+                                                "Column": 15
+                                            },
+                                            "Left": {
+                                                "Name": "i",
+                                                "Prefix": {
+                                                    "Value": "$",
+                                                    "Type": 16,
+                                                    "File": "test.sph",
+                                                    "Line": 8,
+                                                    "Column": 12
+                                                },
+                                                "File": "test.sph",
+                                                "Line": 8,
+                                                "Column": 12
+                                            },
+                                            "Right": {
+                                                "Type": 1,
+                                                "Value": "3",
+                                                "File": "test.sph",
+                                                "Line": 8,
+                                                "Column": 17
+                                            },
+                                            "File": "test.sph",
+                                            "Line": 8,
+                                            "Column": 15
+                                        },
+                                        "Block": {
+                                            "Block": [
+                                                {
+                                                    "Name": "If",
+                                                    "Instruction": {
+                                                        "File": null,
+                                                        "Line": 0,
+                                                        "Column": 0,
+                                                        "Cond": {
+                                                            "Op": {
+                                                                "Kind": 20,
+                                                                "File": "test.sph",
+                                                                "Value": "%",
+                                                                "Line": 9,
+                                                                "Column": 19
+                                                            },
+                                                            "Left": {
+                                                                "Name": "i",
+                                                                "Prefix": {
+                                                                    "Value": "$",
+                                                                    "Type": 16,
+                                                                    "File": "test.sph",
+                                                                    "Line": 9,
+                                                                    "Column": 16
+                                                                },
+                                                                "File": "test.sph",
+                                                                "Line": 9,
+                                                                "Column": 16
+                                                            },
+                                                            "Right": {
+                                                                "Type": 1,
+                                                                "Value": "5",
+                                                                "File": "test.sph",
+                                                                "Line": 9,
+                                                                "Column": 21
+                                                            },
+                                                            "File": "test.sph",
+                                                            "Line": 9,
+                                                            "Column": 19
+                                                        },
+                                                        "Block": {
+                                                            "Block": [
+                                                                {
+                                                                    "Name": "Outln",
+                                                                    "Instruction": {
+                                                                        "File": null,
+                                                                        "Line": 0,
+                                                                        "Column": 0,
+                                                                        "Args": [
+                                                                            {
+                                                                                "Type": 0,
+                                                                                "Value": "FizzBuzz",
+                                                                                "File": "test.sph",
+                                                                                "Line": 10,
+                                                                                "Column": 23
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "File": null,
+                                                                    "Line": 0,
+                                                                    "Column": 0
+                                                                },
+                                                                {
+                                                                    "Name": "continue",
+                                                                    "Instruction": {
+                                                                        "File": null,
+                                                                        "Line": 0,
+                                                                        "Column": 0
+                                                                    },
+                                                                    "File": null,
+                                                                    "Line": 0,
+                                                                    "Column": 0
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    "File": null,
+                                                    "Line": 0,
+                                                    "Column": 0
+                                                },
+                                                {
+                                                    "Name": "Outln",
+                                                    "Instruction": {
+                                                        "File": null,
+                                                        "Line": 0,
+                                                        "Column": 0,
+                                                        "Args": [
+                                                            {
+                                                                "Type": 0,
+                                                                "Value": "Fizz",
+                                                                "File": "test.sph",
+                                                                "Line": 13,
+                                                                "Column": 19
+                                                            }
+                                                        ]
+                                                    },
+                                                    "File": null,
+                                                    "Line": 0,
+                                                    "Column": 0
+                                                },
+                                                {
+                                                    "Name": "continue",
+                                                    "Instruction": {
+                                                        "File": null,
+                                                        "Line": 0,
+                                                        "Column": 0
+                                                    },
+                                                    "File": null,
+                                                    "Line": 0,
+                                                    "Column": 0
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "File": null,
+                                    "Line": 0,
+                                    "Column": 0
+                                },
+                                {
+                                    "Name": "Elif",
+                                    "Instruction": {
+                                        "Cond": {
+                                            "Op": {
+                                                "Kind": 20,
+                                                "File": "test.sph",
+                                                "Value": "%",
+                                                "Line": 16,
+                                                "Column": 20
+                                            },
+                                            "Left": {
+                                                "Name": "i",
+                                                "Prefix": {
+                                                    "Value": "$",
+                                                    "Type": 16,
+                                                    "File": "test.sph",
+                                                    "Line": 16,
+                                                    "Column": 17
+                                                },
+                                                "File": "test.sph",
+                                                "Line": 16,
+                                                "Column": 17
+                                            },
+                                            "Right": {
+                                                "Type": 1,
+                                                "Value": "5",
+                                                "File": "test.sph",
+                                                "Line": 16,
+                                                "Column": 22
+                                            },
+                                            "File": "test.sph",
+                                            "Line": 16,
+                                            "Column": 20
+                                        },
+                                        "Block": {
+                                            "Block": [
+                                                {
+                                                    "Name": "Outln",
+                                                    "Instruction": {
+                                                        "File": null,
+                                                        "Line": 0,
+                                                        "Column": 0,
+                                                        "Args": [
+                                                            {
+                                                                "Type": 0,
+                                                                "Value": "Buzz",
+                                                                "File": "test.sph",
+                                                                "Line": 17,
+                                                                "Column": 19
+                                                            }
+                                                        ]
+                                                    },
+                                                    "File": null,
+                                                    "Line": 0,
+                                                    "Column": 0
+                                                },
+                                                {
+                                                    "Name": "continue",
+                                                    "Instruction": {
+                                                        "File": null,
+                                                        "Line": 0,
+                                                        "Column": 0
+                                                    },
+                                                    "File": null,
+                                                    "Line": 0,
+                                                    "Column": 0
+                                                }
+                                            ]
+                                        },
+                                        "File": null,
+                                        "Line": 0,
+                                        "Column": 0
+                                    },
+                                    "File": null,
+                                    "Line": 0,
+                                    "Column": 0
+                                },
+                                {
+                                    "Name": "Else",
+                                    "Instruction": {
+                                        "File": null,
+                                        "Line": 0,
+                                        "Column": 0,
+                                        "Block": [
+                                            {
+                                                "File": null,
+                                                "Line": 0,
+                                                "Column": 0
+                                            },
+                                            {
+                                                "Name": "Outln",
+                                                "Instruction": {
+                                                    "File": null,
+                                                    "Line": 0,
+                                                    "Column": 0,
+                                                    "Args": [
+                                                        {
+                                                            "Name": "i",
+                                                            "Prefix": {
+                                                                "Value": "$",
+                                                                "Type": 16,
+                                                                "File": "test.sph",
+                                                                "Line": 21,
+                                                                "Column": 19
+                                                            },
+                                                            "File": "test.sph",
+                                                            "Line": 21,
+                                                            "Column": 19
+                                                        }
+                                                    ]
+                                                },
+                                                "File": null,
+                                                "Line": 0,
+                                                "Column": 0
+                                            },
+                                            {
+                                                "Name": "continue",
+                                                "Instruction": {
+                                                    "File": null,
+                                                    "Line": 0,
+                                                    "Column": 0
+                                                },
+                                                "File": null,
+                                                "Line": 0,
+                                                "Column": 0
+                                            },
+                                            {
+                                                "File": null,
+                                                "Line": 0,
+                                                "Column": 0
+                                            }
+                                        ]
+                                    },
+                                    "File": null,
+                                    "Line": 0,
+                                    "Column": 0
+                                }
+                            ]
+                        },
+                        "File": null,
+                        "Line": 0,
+                        "Column": 0
+                    },
+                    "File": null,
+                    "Line": 0,
+                    "Column": 0
+                }
+            ]
+        },
+        "File": null,
+        "Line": 0,
+        "Column": 0
+    },
+    {
+        "File": null,
+        "Line": 0,
+        "Column": 0
+    }
+]

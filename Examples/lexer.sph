@@ -13,10 +13,10 @@ TokenType: enum {
     Slash,
     LParen,
     RParen,
-    LSquare,
-    RSquare,
-    LCurly,
-    RCurly,
+    LBracket,
+    RBracket,
+    LBrace,
+    RBrace,
 }
 
 Lexer: struct {
@@ -38,10 +38,10 @@ lex_one(l: Lexer): Token {
         case '/' => new Token(ty: TokenType.Slash, value: '/')
         case '(' => new Token(ty: TokenType.LParen, value: '(')
         case ')' => new Token(ty: TokenType.RParen, value: ')')
-        case '[' => new Token(ty: TokenType.LSquare, value: '[')
-        case ']' => new Token(ty: TokenType.RSquare, value: ']')
-        case '{' => new Token(ty: TokenType.LCurly, value: '{')
-        case '}' => new Token(ty: TokenType.RCurly, value: '}')
+        case '[' => new Token(ty: TokenType.LBracket, value: '[')
+        case ']' => new Token(ty: TokenType.RBracket, value: ']')
+        case '{' => new Token(ty: TokenType.LBrace, value: '{')
+        case '}' => new Token(ty: TokenType.RBrace, value: '}')
         default  => new Token(ty: TokenType.EOF, value: '')
     }
 }

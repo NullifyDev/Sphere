@@ -7,11 +7,12 @@ public partial record Parser
 {
     public Expressions.BinOp ParseOperators()
     {
-        if (CurrNode == null) throw new Exception($"Left Hand Side of operator (\"{Peek()?.Value}\") is null");
+        if (CurrNode == null) Utils.Error(Peek().File, $"Left Hand Side of operator (\"{Peek()?.Value}\") is null", Peek().Line, Peek().Column);
+
         var Op = Peek()!;
         var LHS = CurrNode;
         var RHS = this.ParseOne(Next())!;
-        // System.Console.WriteLine($"{LHS} {Op} {RHS}");
-        return new Expressions.BinOp(LHS, Op, RHS);
+
+        return new Expressions.BinOp(Op, LHS, RHS);
     }
 }

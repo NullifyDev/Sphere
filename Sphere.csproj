@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="newtonsoft.json" Version="13.0.3" />
+  </ItemGroup>
+
   <!-- WARNING SUPPRESSIONS -->
   <!-- <PropertyGroup>
     <NoWarn>CS8604</NoWarn>
