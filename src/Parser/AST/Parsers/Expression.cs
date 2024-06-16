@@ -5,7 +5,7 @@ namespace Sphere.Parsers;
 
 public partial record Parser
 {
-    public Expressions.BinOp ParseOperators()
+    public Expressions.Operator ParseOperators()
     {
         if (CurrNode == null) Utils.Error(Peek().File, $"Left Hand Side of operator (\"{Peek()?.Value}\") is null", Peek().Line, Peek().Column);
 
@@ -13,6 +13,6 @@ public partial record Parser
         var LHS = CurrNode;
         var RHS = this.ParseOne(Next())!;
 
-        return new Expressions.BinOp(Op, LHS, RHS);
+        return new Expressions.Operator(Op, LHS, RHS, Op.File, Op.Line, Op.Column);
     }
 }

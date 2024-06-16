@@ -10,7 +10,6 @@ public enum TokenKind
 {
     RMLComment,
     LMLComment,
-    // Single character tokens
     Plus,
     Minus,
     Star,
@@ -34,8 +33,6 @@ public enum TokenKind
     Or,
     In,
     Continue,
-
-    // Multi-character tokens
     Equal,
     BangEq,
     DoubleEq,
@@ -43,19 +40,13 @@ public enum TokenKind
     LessEq,
     Greater,
     GreaterEq,
-
-    // Instructions 
-    // Memory Manipulation
     PtrIncr, PtrDecr, Mov,
 
-    // Other
     Out, Outln, Input, Inputln, If, Elif, Else, For, While,
 
-    // Literal
     Identifier, IntLit, HexLit, StringLit, BoolLit, Return,
 
-    // Misc 
-    Sphere, Comment, Config, EOL, EOF
+    Sphere, SLComment, Comment, Config, EOL, EOF
 }
 
 public record Token(TokenKind Kind, string File, string Value, int Line, int Column)

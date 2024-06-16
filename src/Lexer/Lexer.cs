@@ -5,12 +5,12 @@ public class Lexer
     private string file;
     private int curr = 0;
     private int line = 1;
-    private int column = 1;
+    private int column = 0;
 
-    public Lexer(string file, string source)
+    public Lexer(string file)
     {
         this.file = file;
-        this.source = source;
+        this.source = File.ReadAllText(file);
     }
 
     public IEnumerable<Token> Lex()
@@ -21,11 +21,22 @@ public class Lexer
             {
                 case '\"': yield return ScanString(); break;
                 case '\n':
-                case '\r':
-                    yield return new Token(TokenKind.EOL, file, this.Peek().ToString(), this.line, this.column);
-                    if (Peek(1) == '\n') Next();
-                    line++;
+                    int cl = this.column,
+                        ln = this.line;
+                    
+                    this.line++;
                     this.column = 0;
+                    yield return new Token(TokenKind.EOL, file, this.Peek().ToString(), ln, cl);
+                    break;
+                case '\r': 
+                    if (Next() == '\n') {
+                        cl = this.column;
+                        ln = this.line;
+
+                        this.line++;
+                        this.column = 0;
+                        yield return new Token(TokenKind.EOL, file, this.Peek().ToString(), ln, cl);
+                    }
                     break;
                 case '.': yield return new Token(TokenKind.Dot, file, this.Peek().ToString(), this.line, this.column); break;
                 case '(': yield return new Token(TokenKind.LParen, file, this.Peek().ToString(), this.line, this.column); break;
@@ -46,31 +57,34 @@ public class Lexer
                         yield return new Token(TokenKind.Equal, file, "=", this.line, this.column);
                     break;
 
-                case '<': yield return new Token(TokenKind.Less, file, this.Peek().ToString(), this.line, this.column); break;
+                case '<':
+                    if (Next() == '#') yield return new Token(TokenKind.RMLComment, "<#", this.file, this.line, this.column);
+                    else yield return new Token(TokenKind.Less, file, this.Peek().ToString(), this.line, this.column); 
+                    break;
                 case '>': yield return new Token(TokenKind.Greater, file, this.Peek().ToString(), this.line, this.column); break;
-                case '|': yield return new Token(TokenKind.Pipe, file, this.Peek().ToString(), this.line, this.column); break;
+                case '|': 
+                    if (Next() == '|') {
+                        yield return new Token(TokenKind.Or, file, "||", this.line, this.column); break;
+                        continue;
+                    }
+                    yield return new Token(TokenKind.Pipe, file, this.Peek().ToString(), this.line, this.column); break;
+                    break;
                 case '+': yield return new Token(TokenKind.Plus, file, this.Peek().ToString(), this.line, this.column); break;
                 case ':': yield return new Token(TokenKind.Colon, file, this.Peek().ToString(), this.line, this.column); break;
                 case '#':
-                    if (Next() == '>')
-                    {
-                        while (Next() != '<')
-                            if (Next() != '#') continue;
-                    }
-                    while (Next() != '\n') { }
+                    if (Next() == '>') yield return new Token (TokenKind.LMLComment, "#>", this.file, this.line, this.column);
+                    else yield return new Token(TokenKind.SLComment, "#", this.file, this.line, this.column);
                     break;
                 default:
-                    if (Peek() == '#')
-                    {
-                        if (Next() == '>')
-                        {
-                            while (Next() != '<')
-                                if (Next() != '#')
-                                    continue;
-                        }
-                        while (Next() != '\n')
-                            continue;
-                    }
+                    // if (Peek() == '#')
+                    //     if (Next() == '>') yield return new Token(TokenKind.LMLComment, "#>", this.file, this.line, this.column);
+                    //     else yield return new Token(TokenKind.SLComment, "#", this.file, this.line, this.column);
+
+                    // if (Peek() == '<')
+                    //     if (Next() == '#') yield return new Token(TokenKind.RMLComment, "<#", this.file, this.line, this.column);
+                    //     else yield return new Token(TokenKind.Less, file, this.Peek().ToString(), this.line, this.column); break;
+
+
                     if (char.IsLetter(this.Peek()))
                     {
                         yield return ScanIdentifier();
@@ -79,6 +93,10 @@ public class Lexer
                     else if (char.IsDigit(this.Peek()))
                     {
                         yield return ScanNumber();
+                        continue;
+                    }
+                    else if (!char.IsWhiteSpace(Peek())) {
+                        yield return ScanSymbol();
                         continue;
                     }
                     break;
@@ -92,18 +110,38 @@ public class Lexer
     {
         int col = this.column;
         int start = curr;
-        while (NotAtEnd() && char.IsLetterOrDigit(Peek()) || NotAtEnd() && Peek() == '_')
-            Next();
+        while (NotAtEnd() && !char.IsWhiteSpace(Peek()) && (
+                (
+                    ((int)Peek() >= 97 && (int)Peek() <= 122) || 
+                    ((int)Peek() >= 65 && (int)Peek() <= 90)
+                )
+            )
+        ) Next();
 
         string identifier = source.Substring(start, curr - start);
 
-        if (reserved.TryGetValue(identifier, out TokenKind TokenKind))
-            return new Token(TokenKind, file, identifier, this.line, col);
+        if (reserved.TryGetValue(identifier, out TokenKind tk))
+            return new Token(tk, file, identifier, this.line, col);
 
         if (identifier == "true" || identifier == "false")
             return new Token(TokenKind.BoolLit, file, identifier, line, column);
 
         return new Token(TokenKind.Identifier, file, identifier, this.line, col);
+    }
+
+    private Token ScanSymbol()
+    {
+        int col = this.column;
+        int start = curr;
+
+        while (NotAtEnd() && !char.IsWhiteSpace(Peek()) && !char.IsLetter(Peek()) && !char.IsNumber(Peek()))
+            Next();
+
+        string Symbol = source.Substring(start, curr - start);
+
+        if (reserved.TryGetValue(Symbol, out TokenKind tk))
+            return new Token(tk, file, Symbol, this.line, col);
+        else throw new Exception($"Unknown Symbol: {Symbol}");
     }
 
     private Token ScanNumber()
