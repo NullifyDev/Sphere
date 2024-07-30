@@ -1,4 +1,6 @@
-﻿namespace Sphere.Lexer;
+﻿using System.Formats.Asn1;
+
+namespace Sphere.Lexer;
 public class Lexer
 {
     public string source;
@@ -38,6 +40,10 @@ public class Lexer
                         yield return new Token(TokenKind.EOL, file, this.Peek().ToString(), ln, cl);
                     }
                     break;
+                case '-': 
+                    if (this.Next() == '=') yield return new Token(TokenKind.MinusEq, file, "-=", this.line, this.column);
+                    else yield return new Token(TokenKind.Minus, file, this.Peek().ToString(), this.line, this.column); 
+                    break;
                 case '.': yield return new Token(TokenKind.Dot, file, this.Peek().ToString(), this.line, this.column); break;
                 case '(': yield return new Token(TokenKind.LParen, file, this.Peek().ToString(), this.line, this.column); break;
                 case ')': yield return new Token(TokenKind.RParen, file, this.Peek().ToString(), this.line, this.column); break;
@@ -49,27 +55,29 @@ public class Lexer
                 case '@': yield return new Token(TokenKind.AtPrefix, file, this.Peek().ToString(), this.line, this.column); break;
                 case '*': yield return new Token(TokenKind.Star, file, this.Peek().ToString(), this.line, this.column); break;
                 case '!': yield return new Token(TokenKind.Bang, file, this.Peek().ToString(), this.line, this.column); break;
+                case ',': yield return new Token(TokenKind.Comma, file, this.Peek().ToString(), this.line, this.column); break;
                 case '%': yield return new Token(TokenKind.Modulo, file, this.Peek().ToString(), this.line, this.column); break;
                 case '=':
-                    if (Next() == '=')
-                        yield return new Token(TokenKind.DoubleEq, file, "==", this.line, this.column);
-                    else
-                        yield return new Token(TokenKind.Equal, file, "=", this.line, this.column);
+                    if (Next() == '=') yield return new Token(TokenKind.DoubleEq, file, "==", this.line, this.column); else yield return new Token(TokenKind.Equal, file, "=", this.line, this.column);
                     break;
 
                 case '<':
                     if (Next() == '#') yield return new Token(TokenKind.RMLComment, "<#", this.file, this.line, this.column);
+                    else if (Peek() == '=') yield return new Token(TokenKind.RMLComment, "<=", this.file, this.line, this.column);
                     else yield return new Token(TokenKind.Less, file, this.Peek().ToString(), this.line, this.column); 
                     break;
-                case '>': yield return new Token(TokenKind.Greater, file, this.Peek().ToString(), this.line, this.column); break;
-                case '|': 
-                    if (Next() == '|') {
-                        yield return new Token(TokenKind.Or, file, "||", this.line, this.column); break;
-                        continue;
-                    }
-                    yield return new Token(TokenKind.Pipe, file, this.Peek().ToString(), this.line, this.column); break;
+                case '>': 
+                    if (Next() == '=') yield return new Token(TokenKind.GreaterEq, file, ">=", this.line, this.column);
+                    else yield return new Token(TokenKind.Greater, file, this.Peek().ToString(), this.line, this.column);
                     break;
-                case '+': yield return new Token(TokenKind.Plus, file, this.Peek().ToString(), this.line, this.column); break;
+                case '|':
+                    if (Next() == '|') yield return new Token(TokenKind.Or, file, "||", this.line, this.column); 
+                    else yield return new Token(TokenKind.Pipe, file, this.Peek().ToString(), this.line, this.column); 
+                    break;
+                case '+': 
+                    if (Next() == '=') yield return new Token(TokenKind.PlusEq, file, "+=", this.line, this.column);
+                    else  yield return new Token(TokenKind.Plus, file, this.Peek().ToString(), this.line, this.column); 
+                    break;
                 case ':': yield return new Token(TokenKind.Colon, file, this.Peek().ToString(), this.line, this.column); break;
                 case '#':
                     if (Next() == '>') yield return new Token (TokenKind.LMLComment, "#>", this.file, this.line, this.column);
@@ -183,6 +191,8 @@ public class Lexer
         { "mov",      TokenKind.Mov        },
         { "incr",     TokenKind.PtrIncr    },
         { "decr",     TokenKind.PtrDecr    },
+        { "up",       TokenKind.Up         },
+        { "down",     TokenKind.Down       },
         { "outln",    TokenKind.Outln      },
         { "out",      TokenKind.Out        },
         { "in",       TokenKind.Input      },

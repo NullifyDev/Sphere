@@ -1,0 +1,4 @@
+mod(a: int, b: int): int {
+    while $a >= $b: $a -= $b
+    ret $a
+}

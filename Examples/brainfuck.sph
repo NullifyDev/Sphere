@@ -27,16 +27,16 @@ interp(input: string) {
     for 0 input.len i {
         $currchar = $input[$i]              # sets value of currchar to the value of input, indexed by the value of i
         switch currchar {
-            case '>' => mov ptr 1
-            case '<' => mov ptr -1
-            case '+' => incr ptr
-            case '-' => decr ptr
-            case '.' => out $ptr 
-            case ',' => $ptr = in
-            case '[' {
+            '>' => mov ptr 1
+            '<' => mov ptr -1
+            '+' => incr ptr
+            '-' => decr ptr
+            '.' => out $ptr
+            ',' => $ptr = in
+            '[' {
                 if $ptr == 0 {  
                     $loop = 1
-                    for $loop > 0 {
+                    while $loop > 0 {
                         incr i
                         currchar = $input[$i]
                           if currchar == '[': incr loop
@@ -44,10 +44,10 @@ interp(input: string) {
                     }  
                 }
             }
-            case ']' {
+            ']' {
                 if $ptr {                   # check if value of ptr is not null
                     $loop = 1
-                    for loop > 0 {
+                    while loop > 0 {
                         decr i
                         currchar = $input[$i]
                           if currchar == '[': decr loop
@@ -58,4 +58,3 @@ interp(input: string) {
         }
     }
 }
-

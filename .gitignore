@@ -14,3 +14,4 @@ run
 restore
 clean
 refresh
+res.ast.log

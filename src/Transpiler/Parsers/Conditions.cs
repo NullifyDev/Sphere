@@ -3,7 +3,7 @@ using Sphere.Parsers;
 
 namespace Sphere.Compilation;
 
-public partial class Transpiler {
+public partial record Transpiler {
     public string ParseConditions(Node cond) {
         switch (cond.Type) {
             case "Literal":

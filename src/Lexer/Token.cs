@@ -8,12 +8,17 @@ namespace Sphere.Lexer;
 
 public enum TokenKind
 {
+    ERROR = 0,
     RMLComment,
     LMLComment,
     Plus,
+    PlusEq,
     Minus,
+    MinusEq,
     Star,
+    StarEq,
     Slash,
+    SlashEq,
     LParen,
     RParen,
     LBracket,
@@ -28,13 +33,14 @@ public enum TokenKind
     At,
     AtPrefix,
     Bang,
+    BangEq,
     Modulo,
     And,
     Or,
     In,
     Continue,
     Equal,
-    BangEq,
+    EqualEq,
     DoubleEq,
     Less,
     LessEq,
@@ -42,16 +48,31 @@ public enum TokenKind
     GreaterEq,
     PtrIncr, PtrDecr, Mov,
 
-    Out, Outln, Input, Inputln, If, Elif, Else, For, While,
+    Out, Outln, Input, Inputln, If, Elif, Else, For, While, Up, Down,
 
     Identifier, IntLit, HexLit, StringLit, BoolLit, Return,
 
     Sphere, SLComment, Comment, Config, EOL, EOF
 }
 
-public record Token(TokenKind Kind, string File, string Value, int Line, int Column)
+public record class Token
 {
-    public override string ToString() => Kind != TokenKind.EOL ? $"{Kind switch
+    public TokenKind Kind;
+    public string File;
+    public string Value;
+    public int Line;
+    public int Column;
+
+    public Token(TokenKind kind, string file, string value, int line, int column)
+    {
+        this.Kind = kind;
+        this.File = file;
+        this.Value = value;
+        this.Line = line;
+        this.Column = column;
+    }
+
+    public override string ToString() => this.Kind != TokenKind.EOL ? $"{this.Kind switch
     {
         TokenKind.Identifier => $"{Value}",
         TokenKind.IntLit => $"{Value}",
