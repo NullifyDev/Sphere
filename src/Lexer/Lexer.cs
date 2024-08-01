@@ -54,6 +54,7 @@ public class Lexer
                 case '$': yield return new Token(TokenKind.Dollar, file, this.Peek().ToString(), this.line, this.column); break;
                 case '@': yield return new Token(TokenKind.AtPrefix, file, this.Peek().ToString(), this.line, this.column); break;
                 case '*': yield return new Token(TokenKind.Star, file, this.Peek().ToString(), this.line, this.column); break;
+                case ';': yield return new Token(TokenKind.EOL, file, this.Peek().ToString(), this.line, this.column); break;
                 case '!': yield return new Token(TokenKind.Bang, file, this.Peek().ToString(), this.line, this.column); break;
                 case ',': yield return new Token(TokenKind.Comma, file, this.Peek().ToString(), this.line, this.column); break;
                 case '%': yield return new Token(TokenKind.Modulo, file, this.Peek().ToString(), this.line, this.column); break;
@@ -124,7 +125,7 @@ public class Lexer
                     ((int)Peek() >= 65 && (int)Peek() <= 90)
                 )
             )
-        ) Next(); // ???? - Connor
+        ) Next();
 
         string identifier = source.Substring(start, curr - start);
 
@@ -220,7 +221,7 @@ public class Lexer
     private char Peek(int ahead = 0) => this.NotAtEnd(ahead) ? this.source[curr + ahead] : '\0';
     private char Next()
     {
-        if (NotAtEnd()) //! This line is redundant, you call NotAtEnd() before calling Next() consistently, either remove those calls, or remove this if statement.
+        if (NotAtEnd())
         {
             curr++;
             column++;

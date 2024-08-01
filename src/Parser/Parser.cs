@@ -253,7 +253,6 @@ public partial record Parser(string file)
                 // while(Next().Kind == TokenKind.EOL) ;
 
             case TokenKind.RMLComment:
-            case TokenKind.SLComment:
             case TokenKind.RParen:
             case TokenKind.LBracket:
             case TokenKind.RBracket:

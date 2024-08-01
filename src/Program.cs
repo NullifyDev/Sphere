@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿// using Newtonsoft.Json;
 using System.Text.Json;
 
 namespace Sphere;
@@ -13,34 +13,17 @@ public class Program
     static void Main(string[] args)
     {
         Console.Clear();
-        
         // Console.OutputEncoding = Encoding.ASCII;
 
-        List<Node> code = new();
-        string cmd = "";
+        foreach (string a in args)
+        {
+            string source = "#include \"sphere.h\"\n\n";
+            var t = new Transpiler(a).Transpile().GetEnumerator();
+            Utils.Outln(t.Current);
+            while (t.MoveNext())
+                source += $"{t.Current}\n";
 
-        foreach (string a in args) 
-            if (a.StartsWith("--"))
-                if (a == "--ast" || a == "--code" || a == "--error")
-                    cmd = a;
-
-        foreach (string a in args) {
-            if (!a.StartsWith("--")) {
-                if (cmd == "--ast") {
-                    var p = new Parser(a).Parse().GetEnumerator();
-
-                    while(p.MoveNext()) 
-                        code.Add(p.Current);
-
-                    Console.WriteLine(JsonConvert.SerializeObject(code, Formatting.Indented));
-                }
-                else if (cmd == "--code") {
-                    var t = new Transpiler(a).Transpile().GetEnumerator();
-                    Utils.Outln(t.Current);
-                    while (t.MoveNext()) 
-                        Utils.Outln(t.Current);
-                }
-            }
+            Utils.Outln(source);
         }
     }
 }
