@@ -54,6 +54,7 @@ public class Lexer
                 case '$': yield return new Token(TokenKind.Dollar, file, this.Peek().ToString(), this.line, this.column); break;
                 case '@': yield return new Token(TokenKind.AtPrefix, file, this.Peek().ToString(), this.line, this.column); break;
                 case '*': yield return new Token(TokenKind.Star, file, this.Peek().ToString(), this.line, this.column); break;
+                case ';': yield return new Token(TokenKind.EOL, file, this.Peek().ToString(), this.line, this.column); break;
                 case '!': yield return new Token(TokenKind.Bang, file, this.Peek().ToString(), this.line, this.column); break;
                 case ',': yield return new Token(TokenKind.Comma, file, this.Peek().ToString(), this.line, this.column); break;
                 case '%': yield return new Token(TokenKind.Modulo, file, this.Peek().ToString(), this.line, this.column); break;

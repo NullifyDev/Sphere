@@ -6,7 +6,7 @@ using Sphere.Core;
 using System.Dynamic;
 using System.Security.Cryptography.X509Certificates;
 using System.Reflection.Metadata;
-using Newtonsoft.Json.Linq;
+// using Newtonsoft.Json.Linq;
 
 namespace Sphere.Compilation;
 
@@ -18,6 +18,7 @@ public partial record Transpiler
     private IEnumerable<Node> nodes;
     private IEnumerator<Node>? node;
     private Expressions.Identifier LastItem;
+    private int depth = 0;
 
     public Transpiler(string file) {
         this.File = file;
@@ -33,21 +34,21 @@ public partial record Transpiler
         
         // yield return string.Join("\n", nodes.Select(x => TranspileOne(x)));
     }
-    public string Transpile(IEnumerable<Node> nodes, bool isParam = false)
+    public string Transpile(IEnumerable<Node> nodes, bool isParam = false, bool indent = true)
     {
         string res = "";
         foreach(Node n in nodes.Select(x => x)) {
             if (n == null) continue;
             if (n.GetType().DeclaringType.Name == "Instructions") {
                 if (n is not Instructions.If && n is not Instructions.Elif && n is not Instructions.Else && n is not Instructions.For && n is not Instructions.Foreach && n is not Instructions.While && n is not Instructions.Function)
-                    res += $"{TranspileOne(n)}; ";
-                else res += $"{TranspileOne(n)} ";
+                    res += $"{TranspileOne(n, indent)};\n";
+                else res += $"{TranspileOne(n, indent)}";
                 continue;
             } else if (n is Expressions.Identifier || n is Expressions.Literal) {
-                res += $"{TranspileOne(n)}";
+                res += $"{TranspileOne(n, indent)}";
                 continue;
             }
-            res += isParam ? $"{TranspileOne(n)}, " : $"{TranspileOne(n)}; ";
+            res += isParam ? $"{TranspileOne(n, indent)}, " : $"{TranspileOne(n, indent)};\n";
         }
 
         if (isParam && res.EndsWith(", ")) 
@@ -55,10 +56,10 @@ public partial record Transpiler
         else return res;
     }
 
-    public string TranspileOne(Node? node = null, int? depth = null)
+    public string TranspileOne(Node? node = null, bool indent = true)
     {
-        depth ??= 0;
         var curr = node ?? Peek();
+        string body = "";
         switch (curr)
         {
             case Instructions.Function Func:
@@ -74,56 +75,111 @@ public partial record Transpiler
 
                 Instructions.Function? fun = Functions.SingleOrDefault(x => x == Func);
                 if (fun == null)  {
-                    Transpiler.Functions.Add(Func);
-                    fun = Transpiler.Functions.SingleOrDefault(x => x == Func);
-                    return $"{fun.ReturnType} {fun.Name}({string.Join(", ", this.Transpile(fun.Params, true))}) {{ {Transpile(fun.Body)} }}";
+                    Functions.Add(Func);
+                    fun = Functions.SingleOrDefault(x => x == Func);
+
+                    depth++;
+                    body = Transpile(fun.Body);
+                    depth--;
+
+                    return $"{new string(' ', depth * 4)}{fun.ReturnType} {fun.Name}({string.Join(", ", this.Transpile(fun.Params, true))})\n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
                 }
                 break;
 
 
 
             case Instructions.Up U:
-                return $"up({U.Item}, {U.Amount})";
+                return $"{new string(' ', depth*4)}up({U.Item}, {U.Amount})";
             case Instructions.Down D:
-                return $"down({D.Item}, {D.Amount})";
+                return $"{new string(' ', depth * 4)}down({D.Item}, {D.Amount})";
             case Instructions.If If:
-                return $"if ({TranspileOne(If.Cond)}) {{ {this.Transpile(If.Body)} }}";
+                depth++;
+                body = this.Transpile(If.Body);
+                depth--;
+                return $"{new string(' ', depth * 4)}if ({TranspileOne(If.Cond)}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
             case Instructions.Elif Elif:
-                return $"else if ({TranspileOne(Elif.Cond)}) {{ {this.Transpile(Elif.Body)} }}";
+                depth++;
+                body = this.Transpile(Elif.Body);
+                depth--;
+                return $"{new string(' ', depth * 4)}else if ({TranspileOne(Elif.Cond)}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
             case Instructions.Else Else:
-                return $"else {{ {Transpile(Else.Body)} }}";
+                depth++;
+                body = Transpile(Else.Body);
+                depth--;
+                return $"{new string(' ', depth * 4)}else \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}";
             case Instructions.Mov Mov:
-                return $"mov({Mov.Item ?? LastItem}, {Mov.Amount.ToString() ?? 1.ToString()})";
+                return $"{new string(' ', depth * 4)}mov({Mov.Item ?? LastItem}, {Mov.Amount.ToString() ?? 1.ToString()})";
             case Instructions.Incr Incr:
-                return $"incr({Incr.Item ?? LastItem}, {Incr.Amount.ToString() ?? 1.ToString()})";
+                return $"{new string(' ', depth * 4)}incr({Incr.Item ?? LastItem}, {Incr.Amount.ToString() ?? 1.ToString()})";
             case Instructions.Decr Decr:
-                return $"decr({Decr.Item ?? LastItem}, {Decr.Amount.ToString() ?? 1.ToString()})";
+                return $"{new string(' ', depth * 4)}decr({Decr.Item ?? LastItem}, {Decr.Amount.ToString() ?? 1.ToString()})";
             case Instructions.Out Out:
-                return $"out({this.Transpile(Out.Args)})";
+                string output = $"out(\"";
+                string obj = "";
+                foreach (var arg in Out.Args) {
+                    switch (arg) {
+                        case Expressions.Literal argl:
+                            switch (argl.LitType) {
+                                case LiteralType.String:
+                                    output += $"{(argl.Value.ToString() ?? "\"\"")[1..^1]}";
+                                    break;
+                                case LiteralType.Int:
+                                    output += $"{(argl.Value.ToString() ?? "\"\"")}";
+                                    break;
+                            }
+                            break;
+                    }
+                    if (arg is Expressions.Literal) {
+                        var a = arg as Expressions.Literal;
+                        if (a.LitType == LiteralType.String) {
+                            output += $"{(a.Value.ToString() ?? "\"\"")[1..^1]}";
+                        }
+                    }
+                }
+                return $"{new string(' ', depth*4)}{output}";
             case Instructions.Outln Outln:
-                return $"outln({this.Transpile(Outln.Args)})";
+                output = "outln(\"";
+                obj = "";
+                foreach (var arg in Outln.Args)
+                {
+                    switch (arg)
+                    {
+                        case Expressions.Literal argl:
+                            output += $"{(argl.Value.ToString() ?? "")} ";
+                            break;
+                        case Expressions.Identifier argI:
+
+                            obj += $"{argI.Name} ";
+                            output += $"%s ";
+                            break; 
+                    }
+                }
+                return $"{new string(' ', depth * 4)}{output}\")";
             case Instructions.In In:
-                return $"input({In.Prompt})";
+                return $"{new string(' ', depth * 4)}input({In.Prompt})";
             case Instructions.Inln Inln:
-                return $"inputln({Inln.Prompt})";
+                return $"{new string(' ', depth * 4)}inputln({Inln.Prompt})";
             case Instructions.Continue Continue:
-                return $"continue";
+                return $"{new string(' ', depth * 4)}continue";
             case Instructions.For For:
-                return $"for (int {For.Id.Name} = {For.Start}; {For.Id} < {For.End}; {For.Id}++) {{ {this.Transpile(For.Body)} }}"; 
+                depth++;
+                body = this.Transpile(For.Body);
+                depth--;
+                return $"{new string(' ', depth * 4)}for (int {For.Id.Name} = {For.Start}; {For.Id} < {For.End}; {For.Id}++) \n{new string(' ', depth * 4)}{{\n{body}\n{new string(' ', depth * 4)}}}\n"; 
             case Expressions.Literal Lit:
-                return Lit.LitType switch
+                return $"{Lit.LitType switch
                 {
                     LiteralType.String => $"\"{Lit.Value.ToString()}\"",
                     LiteralType.Int => Lit.Value.ToString() ?? "0",
                     LiteralType.Hex => Lit.Value.ToString() ?? "0",
                     LiteralType.Boolean => Lit.Value.ToString() ?? "false",
                     _ => throw new Exception($"Unknown type \"{Lit.LitType}\""),
-                };
+                }}";
             case Expressions.Identifier Id:
                 return $"{Id.Name}";
             case Expressions.Operator op:
-                return $"{op.OpType switch  {
-                    TokenKind.Equal     => $"{this.TranspileOne(op.Left)} = {this.TranspileOne(op.Right)}",
+                return op.OpType switch  {
+                    TokenKind.Equal     => $"{new string(' ', depth * 4)}{this.TranspileOne(op.Left)} = {this.TranspileOne(op.Right)}",
                     TokenKind.DoubleEq  => $"{this.TranspileOne(op.Left)} == {this.TranspileOne(op.Right)}",
                     TokenKind.Dot       => $"{this.TranspileOne(op.Left)} . {this.TranspileOne(op.Right)}",
                     TokenKind.BangEq    => $"{this.TranspileOne(op.Left)} != {this.TranspileOne(op.Right)}",
@@ -135,20 +191,26 @@ public partial record Transpiler
                     TokenKind.And       => $"{this.TranspileOne(op.Left)} && {this.TranspileOne(op.Right)}",
                     TokenKind.Or        => $"{this.TranspileOne(op.Left)} || {this.TranspileOne(op.Right)}",
                     TokenKind.Slash     => $"{this.TranspileOne(op.Left)} / {this.TranspileOne(op.Right)}",
-                    TokenKind.SlashEq   => $"{this.TranspileOne(op.Left)} /= {this.TranspileOne(op.Right)}",
+                    TokenKind.SlashEq   => $"{new string(' ', depth+1 * 4)}{this.TranspileOne(op.Left)} /= {this.TranspileOne(op.Right)}",
                     TokenKind.Plus      => $"{this.TranspileOne(op.Left)} + {this.TranspileOne(op.Right)}",
-                    TokenKind.PlusEq    => $"{this.TranspileOne(op.Left)} += {this.TranspileOne(op.Right)}",
+                    TokenKind.PlusEq    => $"{new string(' ', depth * 4)}{this.TranspileOne(op.Left)} += {this.TranspileOne(op.Right)}",
                     TokenKind.Minus     => $"{this.TranspileOne(op.Left)} - {this.TranspileOne(op.Right)}",
-                    TokenKind.MinusEq   => $"{this.TranspileOne(op.Left)} -= {this.TranspileOne(op.Right)}",
+                    TokenKind.MinusEq   => $"{new string(' ', depth * 4)}{this.TranspileOne(op.Left)} -= {this.TranspileOne(op.Right)}",
                     TokenKind.Modulo    => $"{this.TranspileOne(op.Left)} % {this.TranspileOne(op.Right)}",
                     _                   => throw (Exception)Utils.InternalError(op.File, $"Unknown Node \"{op.OpType}\"", op.Line, op.Column)
-                }}";
+                };
 
             case Instructions.Foreach Foreach:
-                return $"for (auto {Foreach.In.Left} : {Foreach.In.Right}) {{ {string.Join("; ", Foreach.Body)} }}";
+                depth++;
+                body = Transpile(Foreach.Body);
+                depth--;
+                return $"{new string(' ', depth * 4)}for (auto {Foreach.In.Left} : {Foreach.In.Right}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
 
             case Instructions.While While:
-                return $"while ({this.TranspileOne(While.Condition)}) {{ {this.Transpile(While.Body)}}} ";
+                depth++;
+                body = Transpile(While.Body);
+                depth--;
+                return $"{new string(' ', depth * 4)}while ({TranspileOne(While.Condition)}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
             case Instructions.Sphere Sphere:
                 foreach (var n in Sphere.Body) {
                     switch(n) {
@@ -183,11 +245,12 @@ public partial record Transpiler
 
             case Instructions.Return Return:
                 return Return.Items.Count > 1 ? 
-                    $"return ({string.Join(", ", Transpile(Return.Items))})" :
-                    $"return {string.Join(", ", Transpile(Return.Items))}";
+                    $"{new string(' ', depth * 4)}return ({string.Join(", ", Transpile(Return.Items))})" :
+                    $"{new string(' ', depth * 4)}return {string.Join(", ", Transpile(Return.Items))}";
 
             case Instructions.GetCurrAddressVal:
-                return DefaultPointer.Name == "$@" ? "DEFAULT_SPHERE_POINTER" : DefaultPointer.Name;
+                output = DefaultPointer.Name == "$@" ? "DEFAULT_SPHERE_POINTER" : DefaultPointer.Name;
+                return $"{new string(' ', depth * 4)}{output}";
         }
         return "";
     }
