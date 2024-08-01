@@ -124,7 +124,7 @@ public class Lexer
                     ((int)Peek() >= 65 && (int)Peek() <= 90)
                 )
             )
-        ) Next();
+        ) Next(); // ???? - Connor
 
         string identifier = source.Substring(start, curr - start);
 
@@ -220,7 +220,7 @@ public class Lexer
     private char Peek(int ahead = 0) => this.NotAtEnd(ahead) ? this.source[curr + ahead] : '\0';
     private char Next()
     {
-        if (NotAtEnd())
+        if (NotAtEnd()) //! This line is redundant, you call NotAtEnd() before calling Next() consistently, either remove those calls, or remove this if statement.
         {
             curr++;
             column++;
