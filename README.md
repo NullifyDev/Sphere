@@ -40,7 +40,7 @@ This project is written with the latest .Net release So install that before cont
 | `if <Condition> { <instructions> }`       | Executes Instructions when condition returns true                                   |
 | `elif <Condition> { <instructions> }`     | Executes Instructions when condition returns true when primary condition is not met |
 | `else if  <Condition> { <instructions> }` | Executes Instructions when condition returns true when primary condition is not met |
-| `else { <instructions> }`                 | Executes Instrucions when none of the Conditions were met                           |
+| `else { <instructions> }`                 | Executes Instructions when none of the Conditions were met                           |
 | `for <start> <end> <identifier>`          | 
 
 
