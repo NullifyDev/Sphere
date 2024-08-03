@@ -18,15 +18,19 @@ This language uses Freestanding-compatible C/C++ code to minimize the amount of 
 [Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
 <br><br>
 ### Instructions
-| Instructions and Arguments          | Description                                                             |
-|-------------------------------------|-------------------------------------------------------------------------|
-| `mov <object> <int>`                | Move the object by signed number of addresses                           | 
-| `incr <int>`                        | Increment current address by the given amount                           |
-| `decr <int>`                        | Decrement current address by the given amount                           |
-| `<string>(): <DataType>`            | Function with name as string with one argument                          |
-| `out <arsg>`                        | Print all arguments before EOL without line break.                      |
-| `outln <args>`                      | Print all arguments before EOL with line break.                         |
-| `if <Condition> { <instructions> }` | Executes Instructions when condition returns true                       |
+| Instructions and Arguments                | Description                                                                         |
+|-------------------------------------------|-------------------------------------------------------------------------------------|
+| `mov <object> <int>`                      | Move the object by signed number of addresses                                       | 
+| `incr <int>`                              | Increment current address by the given amount                                       |
+| `decr <int>`                              | Decrement current address by the given amount                                       |
+| `<identifier>(): <DataType> {}`           | Function with name as string with one argument                                      |
+| `out <arsg>`                              | Print all arguments before EOL without line break.                                  |
+| `outln <args>`                            | Print all arguments before EOL with line break.                                     |
+| `if <Condition> { <instructions> }`       | Executes Instructions when condition returns true                                   |
+| `elif <Condition> { <instructions> }`     | Executes Instructions when condition returns true when primary condition is not met |
+| `else if  <Condition> { <instructions> }` | Executes Instructions when condition returns true when primary condition is not met |
+| `else { <instructions> }`                 | Executes Instructions when none of the Conditions were met                           |
+| `for <start> <end> <identifier>`          | 
 
 [Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
 <br><br>

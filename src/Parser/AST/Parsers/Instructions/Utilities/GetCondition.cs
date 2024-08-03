@@ -29,9 +29,11 @@ public partial record Parser
                     {
                         o.Right = this.GetCondition(true);
                         CurrNode = o;
-                        o = ParseOne(token.Current) as Operator;
-                        o.Right = this.GetCondition(true);
-                        n = o;
+                        if (IsEither(new TokenKind[] { TokenKind.And, TokenKind.Or })) { 
+                            o = ParseOne(token.Current) as Operator;
+                            o.Right = this.GetCondition(true);
+                            n = o;
+                        }
                     }
                 }
             }
