@@ -1,12 +1,12 @@
 # Lexer for Sphere language
 # Written by github.com/megabytesofrem (Abby)
 
-Token: struct {
+Token = {
     ty: TokenType,
     value: string
 }
 
-TokenType: enum {
+TokenType: enum = {
     Plus,
     Minus,
     Star,
@@ -19,7 +19,7 @@ TokenType: enum {
     RBrace,
 }
 
-Lexer: struct {
+Lexer = {
     Lexer(input: string) {
         $.input = input
         $.position = 0
@@ -32,33 +32,31 @@ Lexer: struct {
 
 lex_one(l: Lexer): Token {
     switch l.current_char {
-        case '+' => new Token(ty: TokenType.Plus, value: '+')
-        case '-' => new Token(ty: TokenType.Minus, value: '-')
-        case '*' => new Token(ty: TokenType.Star, value: '*')
-        case '/' => new Token(ty: TokenType.Slash, value: '/')
-        case '(' => new Token(ty: TokenType.LParen, value: '(')
-        case ')' => new Token(ty: TokenType.RParen, value: ')')
-        case '[' => new Token(ty: TokenType.LBracket, value: '[')
-        case ']' => new Token(ty: TokenType.RBracket, value: ']')
-        case '{' => new Token(ty: TokenType.LBrace, value: '{')
-        case '}' => new Token(ty: TokenType.RBrace, value: '}')
-        default  => new Token(ty: TokenType.EOF, value: '')
+        '+' => new Token(ty: TokenType.Plus, value: '+')
+        '-' => new Token(ty: TokenType.Minus, value: '-')
+        '*' => new Token(ty: TokenType.Star, value: '*')
+        '/' => new Token(ty: TokenType.Slash, value: '/')
+        '(' => new Token(ty: TokenType.LParen, value: '(')
+        ')' => new Token(ty: TokenType.RParen, value: ')')
+        '[' => new Token(ty: TokenType.LBracket, value: '[')
+        ']' => new Token(ty: TokenType.RBracket, value: ']')
+        '{' => new Token(ty: TokenType.LBrace, value: '{')
+        '}' => new Token(ty: TokenType.RBrace, value: '}')
+         _  => new Token(ty: TokenType.EOF, value: '')
     }
 }
 
 peek(l: Lexer): char {
-    if l.position + 1 > len(l.input) - 1 {
+    if l.position + 1 > len(l.input) - 1: 
         ret null
-    } else {
+    else: 
         ret l.input[l.position + 1]
-    }
 }
 
 advance(l: Lexer): char {
     l.position += 1
-    if l.position > len(l.input) - 1 {
+    if l.position > len(l.input) - 1:
         l.current_char = null
-    } else {
+    else:
         l.current_char = l.input[l.position]
-    }
 }
