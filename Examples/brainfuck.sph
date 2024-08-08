@@ -33,7 +33,7 @@ interp(input: string) {
             '-' => decr ptr
             '.' => out $ptr
             ',' => $ptr = in
-            '[' {
+            '[' => {
                 if $ptr == 0 {  
                     $loop = 1
                     while $loop > 0 {
@@ -44,7 +44,7 @@ interp(input: string) {
                     }  
                 }
             }
-            ']' {
+            ']' => {
                 if $ptr {                   # check if value of ptr is not null
                     $loop = 1
                     while loop > 0 {
