@@ -12,7 +12,7 @@
 # COMPILATION CONDITION GUARD(S)
 # Tells the compiler "if Sphere is earlier than v1.1, return (do not run)"
 Sphere { 
-    if Sphere.Version > 1.1: ret 
+    if Sphere.Version > 1.1: skip 
 }
 
 main(args) { # function with wildcard varible (morphs into what gets assigned to it)
