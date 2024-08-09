@@ -15,8 +15,9 @@ Sphere {
     if Sphere.Version > 1.1: skip 
 }
 
-main(args) { # function with wildcard varible (morphs into what gets assigned to it)
+int main(args) { # function with wildcard varible (morphs into what gets assigned to it)
     $inpterp("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
+    ret 0
 }
 
 tape: string
