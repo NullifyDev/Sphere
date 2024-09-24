@@ -22,9 +22,9 @@ This project is written with the latest .Net release So install that before cont
 ### Identifier Prefixes
 | Handle      | Description                                       |
 |-------------|---------------------------------------------------|
-| `$<object>` | Gets or sets the value of the specified object    |
+| `$<object>` | Gets the information of the specified object      |
 | `@<object>` | Gets or sets the address of the specified object. |
-| `<object>`  | Gets or declares the object and its information   |
+| `<object>`  | Gets or sets the value of the object              |
 
 [Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
 <br><br>
