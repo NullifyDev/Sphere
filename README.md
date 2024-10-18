@@ -11,7 +11,7 @@ This language mainly uses freestanding C/C++ code for its Runtime. The runtime e
 <br>
 
 # Examples
-```
+```ps1
 main(): int {
     hello: string = "Hello,"
     world: string = "World!"
