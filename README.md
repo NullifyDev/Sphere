@@ -10,6 +10,21 @@ This language mainly uses freestanding C/C++ code for its Runtime. The runtime e
 <br>
 <br>
 
+# Examples
+```
+main(): int {
+    hello: string = "Hello,"
+    world: string = "World!"
+    outln hello world
+    outln hello+world 
+}
+
+<# Output:
+Hello, World!
+Hello,World!
+#>
+```
+
 # How to Compile
 This project is written with the latest .Net release So install that before continuing. Not sure if you have it? check by doing `dotnet --version`.
 ```
