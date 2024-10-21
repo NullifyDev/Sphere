@@ -16,8 +16,6 @@ public partial class Instructions
             this.End = End;
             this.Id = Id;
             this.Body = Body;
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
         public override string ToString() => $"for {Start} {End} {Id} {{\n    {string.Join("\n    ", Body)}\n}}";
     }

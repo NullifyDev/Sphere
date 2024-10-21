@@ -52,6 +52,8 @@ public enum TokenKind
 
     Identifier, IntLit, HexLit, StringLit, BoolLit, Return,
 
+    DataType_Void, DataType_Int, DataType_String, DataType_Bool,
+
     Sphere, SLComment, Comment, Config, EOL, EOF
 }
 

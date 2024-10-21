@@ -10,7 +10,6 @@ public partial class Instructions
         public List<Node> Body;
         public Elif(Node cond, List<Node> body, string file, int line, int col) : base(file, line, col)
         {
-            base.Type = $"Instructions+{this.GetType().Name}";
 
             this.Cond = cond;
             this.Body = body;
@@ -18,7 +17,6 @@ public partial class Instructions
 
         public Elif(If i, string file, int line, int col) : base(file, line, col)
         {
-            base.Type = $"Instructions+{this.GetType().Name}";
 
             this.Cond = i.Cond;
             this.Body = i.Body;

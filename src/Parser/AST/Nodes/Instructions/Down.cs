@@ -13,8 +13,6 @@ public partial class Instructions
         {
             this.Item = item ?? Compilation.Transpiler.DefaultPointer;
             this.Amount = amount;
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
         public override string ToString() => $"Mov: [ {Item}, {Amount} ]";
     }

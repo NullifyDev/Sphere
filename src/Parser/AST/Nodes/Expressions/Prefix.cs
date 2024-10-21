@@ -13,15 +13,11 @@ public partial class Expressions
         {
             this.Value = tok.Value;
             this.Type = tok.Kind;
-
-            base.Type = $"Expressions+{this.GetType().Name}";
         }
         public Prefix(Token tok) : base(tok.File, tok.Line, tok.Column)
         {
             this.Value = tok.Value;
             this.Type = tok.Kind;
-
-            base.Type = $"Expressions+{this.GetType().Name}";
         }
         public override string ToString() => this.Value;
     }

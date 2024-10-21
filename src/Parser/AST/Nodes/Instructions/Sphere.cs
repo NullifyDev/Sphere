@@ -10,8 +10,6 @@ public partial class Instructions
         public Sphere(List<Node> Body, string file, int line, int col) : base(file, line, col)
         {
             this.Body = Body;
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
         public override string ToString() => $"SPHERE: {{ \n    {string.Join("\n    ", Body ?? new List<Node>(0).AsEnumerable())} \n}}\n";
     }

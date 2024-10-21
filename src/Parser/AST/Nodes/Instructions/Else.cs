@@ -10,8 +10,6 @@ public partial class Instructions
         public Else(List<Node> body, string file, int line, int col) : base(file, line, col)
         {
             this.Body = body ?? new();
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
         public override string ToString() => $"else {{ {string.Join("\n     ", Body)} }}";
     }

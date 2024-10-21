@@ -1,7 +1,6 @@
-using System.Net.Mail;
-using System.Runtime.InteropServices;
 using Sphere.Lexer;
 using Sphere.Parsers.AST;
+using Sphere.Types;
 
 namespace Sphere.Parsers;
 
@@ -39,7 +38,7 @@ public partial record Parser(string file)
                 {
                     yield return CurrNode!;
                     CurrNode = null;
-                } 
+                }
             }
 
         }
@@ -54,6 +53,14 @@ public partial record Parser(string file)
         {
             case TokenKind.EOF: return new Expressions.EOF(curr!.File, curr.Line, curr.Column);
             case TokenKind.EOL: return new Expressions.EOL(curr!.File, curr.Line, curr.Column);
+
+
+            case TokenKind.DataType_String:
+            case TokenKind.DataType_Int:
+            case TokenKind.DataType_Bool:
+            case TokenKind.DataType_Void:
+                Next();
+                return new Expressions.Type(LastToken);
 
             case TokenKind.StringLit:
             case TokenKind.IntLit:
@@ -72,7 +79,6 @@ public partial record Parser(string file)
                 Next();
                 return new Instructions.Continue(curr!.File, curr.Line, curr.Column);
 
-            case TokenKind.Equal:
             case TokenKind.Plus:
             case TokenKind.Slash:
             case TokenKind.Minus:
@@ -90,7 +96,24 @@ public partial record Parser(string file)
             case TokenKind.DoubleEq:
 
             case TokenKind.Pipe:
-                return new Expressions.Operator(LastToken, null!, null!, curr!.File, curr.Line, curr.Column);
+                var op = new Expressions.Operator(LastToken, null!, null!, curr!.File, curr.Line, curr.Column);
+                if (op.OpType == TokenKind.Equal)
+                {
+                    if (op.Left is Expressions.Identifier && op.Right is Expressions.Literal)
+                    {
+                        Expressions.Identifier left = op.Left as Expressions.Identifier;
+                        if (left.Literal == null)
+                        {
+                            Expressions.Identifier id = new(op.Left as Expressions.Identifier);
+                            id.Literal = op.Right as Expressions.Literal;
+                            return id;
+                        }
+                    }
+                }
+                if (op.OpType == TokenKind.Colon) { }
+
+                return op;
+
 
             case TokenKind.LParen:
             case TokenKind.RParen:
@@ -123,15 +146,19 @@ public partial record Parser(string file)
             case TokenKind.AtPrefix:
             case TokenKind.Dollar:
                 Peek();
-                if (!IsCurrent(TokenKind.Identifier)) Utils.Error("Epected Identifier after prefix '$'", curr!.File, curr.Line, curr.Column);                
+                if (!IsCurrent(TokenKind.Identifier)) Utils.Error("Epected Identifier after prefix '$'", curr!.File, curr.Line, curr.Column);
                 return new Expressions.Identifier(Peek()!.Value, new(LastToken), curr!.File, curr.Line, curr.Column);
+
+            case TokenKind.SLComment:
+                while(Next().Kind != TokenKind.EOL) ;
+                break;
 
             default:
                 var tok = Peek();
                 string val = tok?.Value ?? "null",
                        type = tok?.Kind.ToString() ?? "null";
 
-                Utils.InternalError(tok!.File, $"Unknown token: {type} ({val})", tok.Line, tok.Column);
+                Utils.InternalError(FailedProcedure.P, "Token", $"Unknown token: {type} ({val})", tok.File, tok.Line, tok.Column);
                 break;
         }
         return null;
@@ -142,20 +169,29 @@ public partial record Parser(string file)
 
         switch (curr.Kind)
         {
-            case TokenKind.EOF: 
+
+            case TokenKind.DataType_String:
+            case TokenKind.DataType_Int:
+            case TokenKind.DataType_Bool:
+            case TokenKind.DataType_Void:
+                Next();
+                return new Expressions.Type(curr);
+
+            case TokenKind.EOF:
                 Next();
                 return new Expressions.EOF(curr.File, curr.Line, curr.Column);
-            case TokenKind.EOL: 
-                Next(); 
+            case TokenKind.EOL:
+                Next();
                 return new Expressions.EOL(curr.File, curr.Line, curr.Column);
 
             case TokenKind.StringLit:
             case TokenKind.IntLit:
             case TokenKind.BoolLit:
-            case TokenKind.HexLit:
-                Node lit = new Expressions.Literal(Peek()!.Kind, Peek()!.Value, curr.File, curr.Line, curr.Column);
                 Next();
-                return lit;
+                return new Expressions.Literal(LastToken!.Kind, LastToken!.Value, curr.File, curr.Line, curr.Column);
+                // Node lit = new Expressions.Literal(Peek()!.Kind, Peek()!.Value, curr.File, curr.Line, curr.Column);
+                // Next();
+                // return lit;
 
             case TokenKind.Identifier:
                 string n = Peek()!.Value;
@@ -191,12 +227,18 @@ public partial record Parser(string file)
             case TokenKind.Pipe:
                 return ParseOperators();
 
+            case TokenKind.RParen:
+                Next();
+                break;
+
+            // FUNCTION DELCARATION AND INVOKATION!
             case TokenKind.LParen:
-                if (CurrNode is not Expressions.Identifier) {
+                if (CurrNode is not Expressions.Identifier)
+                {
                     Error.Add(new(
-                        ErrorType.Compilation, (CurrNode as Node),
-                        CurrNode == null ? 
-                            $"[Parser: LParen]: Expected Identifier but got null instead." : 
+                        ErrorType.Compilation, (CurrNode as Node)!,
+                        CurrNode == null ?
+                            $"[Parser: LParen]: Expected Identifier but got null instead." :
                             $"[Parser: LParen]: Expected Identifier but got \"{CurrNode}\" instead."
                     ));
                     Error.Dump();
@@ -209,52 +251,58 @@ public partial record Parser(string file)
                     Node? cn = null;
                     Next();
                     while (Peek()?.Kind != TokenKind.RParen)
-                    {   
+                    {
                         cn = this.ParseOne();
                         if (cn is Expressions.Identifier)
                             CurrNode = cn;
 
-                        if (Peek().Kind == TokenKind.Comma) {
+                        if (Peek().Kind == TokenKind.Comma)
+                        {
                             if (cn != null) parameters.Add(cn!);
                             Next();
                         }
 
-                        if (LastToken?.Kind == TokenKind.RParen) {
+                        if (LastToken?.Kind == TokenKind.RParen)
+                        {
                             break;
                         }
                     }
                     if (cn != null) parameters.Add(cn);
-                    if (Peek().Kind != TokenKind.Colon) Next();
                 }
 
-                Node? ReturnType = null;
-                if (Peek().Kind == TokenKind.Colon)
+                TypeKind? ReturnType = null;
+                if (Next().Kind == TokenKind.Colon)
                 {
-                    Token t = Next();
-                    if (t.Kind == TokenKind.Identifier)
-                        ReturnType = this.ParseOne(Peek())!;
-                    else Utils.Error(this.file, "Expected return type after ':'", t.Line, t.Column);
+                    Node t = ParseOne(Next());
+                    if (t == null)
+                        Utils.InternalError(FailedProcedure.P, $"Function.ReturnType", $"returned Node of {name} is null", t.File, t.Line, t.Column);
+
+                    ReturnType = t switch
+                    {
+                        Expressions.Identifier i => i.Type.Kind,
+                        Expressions.Type dt => dt.Kind,
+                    };
+
                     Peek();
                 }
                 if (Peek().Kind == TokenKind.EOL)
-                    while(Peek().Kind == TokenKind.EOL) Next();
-                if (Peek().Kind == TokenKind.LBrace) {
+                    while (Peek().Kind == TokenKind.EOL) Next();
+                if (Peek().Kind == TokenKind.LBrace)
+                {
                     // Next();
-                    return new Instructions.Function(
+                    return new Expressions.Function(
                         name,
-                        ReturnType ?? new Expressions.Identifier("void", Peek().File, Peek().Line, Peek().Column),
+                        ReturnType ?? TypeKind.Void,
                         parameters,
                         GetBody(),
                         curr.File, curr.Line, curr.Column
                     );
                 }
-                
                 return new Instructions.Invoke(name, parameters, name.File, name.Line, name.Column);
-                // while(Next().Kind == TokenKind.EOL) ;
 
-            case TokenKind.RMLComment:
-            case TokenKind.RParen:
-            case TokenKind.LBracket:
+            // while(Next().Kind == TokenKind.EOL) ;
+            // while (node.MoveNext()) nKind.LBracket;
+
             case TokenKind.RBracket:
             case TokenKind.LBrace:
             case TokenKind.RBrace:
@@ -270,7 +318,7 @@ public partial record Parser(string file)
                 }
                 break;
 
-            case TokenKind.Out:                 
+            case TokenKind.Out:
             case TokenKind.Outln:
             case TokenKind.Input:
             case TokenKind.Inputln:
@@ -288,7 +336,7 @@ public partial record Parser(string file)
                 return ParseInstructions(curr.File, curr.Line, curr.Column);
 
             case TokenKind.LMLComment:
-                while(Next().Kind != TokenKind.RMLComment) ;
+                while (Next().Kind != TokenKind.RMLComment);
                 break;
 
             case TokenKind.AtPrefix:
@@ -298,17 +346,22 @@ public partial record Parser(string file)
                 Node id = new Expressions.Identifier(Peek()!.Value, new(LastToken), curr.File, curr.Line, curr.Column);
 
                 if (LastToken.Kind == TokenKind.Dollar && Peek().Kind == TokenKind.AtPrefix) id = new Instructions.GetCurrAddressVal(curr.File, curr.Line, curr.Column);
-                else if (!IsCurrent(TokenKind.Identifier)) Utils.Error($"Epected Identifier after prefix '{LastToken!.Value}'. Got {Peek()} Instead ", curr.File, curr.Line, curr.Column); 
-                
+                else if (!IsCurrent(TokenKind.Identifier)) Utils.Error($"Epected Identifier after prefix '{LastToken!.Value}'. Got {Peek()} Instead ", curr.File, curr.Line, curr.Column);
+
                 Next();
                 return id;
+
+            case TokenKind.SLComment:
+                while(Next().Kind != TokenKind.EOL) ;
+                // Next();
+                break;
 
             default:
                 var tok = Peek();
                 string val = tok?.Value ?? "null",
                        type = tok?.Kind.ToString() ?? "null";
 
-                Utils.InternalError(tok!.File, $"Unknown token: {type} ({val})", tok.Line, tok.Column);
+                Utils.InternalError(FailedProcedure.P, "Token", $"Unknown token: {type} ({val})", tok.File, tok.Line, tok.Column);
                 break;
         }
         return null;

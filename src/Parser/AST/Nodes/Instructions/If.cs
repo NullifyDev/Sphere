@@ -10,8 +10,6 @@ public partial class Instructions
         public List<Node> Body;
         public If(Node cond, List<Node> body, string file, int line, int col) : base(file, line, col)
         {
-            base.Type = $"Instructions+{this.GetType().Name}";
-
             this.Cond = cond;
             this.Body = body;
         }

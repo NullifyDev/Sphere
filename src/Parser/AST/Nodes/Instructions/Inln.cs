@@ -10,9 +10,7 @@ public partial class Instructions
         public Inln(Expressions.Literal prompt, string file, int line, int col) : base(file, line, col)
         {
             this.Prompt = prompt;
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
-        public override string ToString() => $"inln({Prompt})";
+        public override string ToString() => $"inputln({Prompt});";
     }
 }

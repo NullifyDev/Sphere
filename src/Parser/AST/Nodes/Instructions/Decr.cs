@@ -13,8 +13,6 @@ public partial class Instructions
         {
             this.Item = item;
             this.Amount = amount;
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
         public override string ToString() => $"Decr: [ {Item}, {Amount} ]";
     }

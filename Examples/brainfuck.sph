@@ -16,7 +16,7 @@ Sphere {
 }
 
 main(args) { # function with wildcard varible (morphs into what gets assigned to it)
-    $inpterp("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
+    inpterp("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
 }
 
 tape: string
@@ -24,37 +24,39 @@ i, loop: int | unsigned
 
 interp(input: string) {
     currchar: string @ @input | len = 1     # sets currchar to the address of input (first/0th index)
-    for 0 input.len i {
-        $currchar = $input[$i]              # sets value of currchar to the value of input, indexed by the value of i
+
+    while i < input.len {
+        currchar = input[i]              # sets value of currchar to the value of input, indexed by the value of i
         switch currchar {
             '>' => mov ptr 1
             '<' => mov ptr -1
             '+' => incr ptr
             '-' => decr ptr
-            '.' => out $ptr
-            ',' => $ptr = in
+            '.' => out ptr
+            ',' => ptr = in
             '[' {
-                if $ptr == 0 {  
-                    $loop = 1
-                    while $loop > 0 {
+                if ptr == 0 {  
+                    loop = 1
+                    while loop > 0 {
                         incr i
-                        currchar = $input[$i]
+                        currchar = input[i]
                           if currchar == '[': incr loop
                         elif currchar == ']': decr loop
                     }  
                 }
             }
             ']' {
-                if $ptr {                   # check if value of ptr is not null
-                    $loop = 1
+                if ptr {                   # check if value of ptr is not null
+                    loop = 1
                     while loop > 0 {
                         decr i
-                        currchar = $input[$i]
+                        currchar = input[i]
                           if currchar == '[': decr loop
                         elif currchar == ']': incr loop
                     }
                 }  
             }
         }
+        incr i
     }
 }

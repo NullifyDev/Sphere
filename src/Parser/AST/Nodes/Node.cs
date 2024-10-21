@@ -1,15 +1,15 @@
 namespace Sphere.Parsers.AST;
 
-public record Node {
-    public string Type;
+public record Node
+{
     public string File;
     public int Line, Column;
-    public Node(string File, int Line, int Column) {
+    public Node(string File, int Line, int Column)
+    {
         this.File = File;
         this.Line = Line;
         this.Column = Column;
     }
-    public string GetNodeType() => this.Type;
 
     // public object GetValue() => GetValue(this);
 
@@ -36,7 +36,7 @@ public record Node {
     //     Instructions.Inln => n as Instructions.Inln,
     //     Instructions.Continue => n as Instructions.Continue,
     //     Instructions.For => n as Instructions.For,
-    //     Instructions.Function => n as Instructions.Function,
+    //     Expressions.Function => n as Expressions.Function,
     //     Instructions.Foreach => n as Instructions.Foreach,
     //     Instructions.While => n as Instructions.While,
     //     Instructions.Sphere => n as Instructions.Sphere,

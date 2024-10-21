@@ -9,10 +9,7 @@ public partial class Instructions
         public List<Node> Items;
         public Return(string file, int line, int col, List<Node> items) : base(file, line, col)
         {
-            base.Type = $"Instructions+{this.GetType().Name}";
             this.Items = items ?? new();
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
         public override string ToString() => $"return {string.Join("\n    ", Items)}";
     }

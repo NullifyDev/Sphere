@@ -34,6 +34,7 @@ public partial record Parser
             while (Peek()?.Kind != TokenKind.RBrace)
             {
                 Token tok = Peek()!;
+                if (tok.Kind == TokenKind.EOF) break;
                 while (tok.Kind == TokenKind.EOL) tok = Next()!;
                 if (tok.Kind == TokenKind.RBrace) break;
                 curr = this.ParseOne()!;

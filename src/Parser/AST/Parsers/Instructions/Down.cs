@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Sphere.Lexer;
 using Sphere.Parsers.AST;
 using static Sphere.Parsers.AST.Expressions;
+using Sphere.Types;
 
 namespace Sphere.Parsers;
 
@@ -17,10 +18,10 @@ public partial record Parser
         long amount = 1;
 
         if (args.Length == 0) return new Instructions.Down(file, line, col, targetPtr, amount);
-        
+
         if (args[0] is not Expressions.Identifier)
             if (args[0] is not Expressions.Literal)
-                Utils.ErrorLang(ErrorType.Compilation, file, $"Expected an Identifier or Literal as first arguent", line, col);
+                Utils.ErrorLang(ErrorType.Compilation, $"Expected an Identifier or Literal as first arguent", file, line, col);
 
         if (args[0] is Literal)
         {
@@ -28,33 +29,33 @@ public partial record Parser
 
             var l = args[0] as Literal;
 
-            amount = l.LitType switch {
-                LiteralType.String  => long.Parse(l.Value.ToString() ?? "1"),
-                LiteralType.Hex     => long.Parse(l.Value.ToString() ?? "0x1", System.Globalization.NumberStyles.HexNumber),
-                LiteralType.Int     => long.Parse(l.Value.ToString() ?? "1"),
-                LiteralType.Boolean => l.Value.ToString() == "true" || l.Value.ToString() == "false" ? (l.Value.ToString() == "true" ? 1 : 0) : 0,
+            amount = l.Type.Kind switch
+            {
+                TypeKind.String => long.Parse(l.Value.ToString() ?? "1"),
+                TypeKind.Int => long.Parse(l.Value.ToString() ?? "1"),
+                TypeKind.Bool => l.Value.ToString() == "true" || l.Value.ToString() == "false" ? (l.Value.ToString() == "true" ? 1 : 0) : 0,
             };
         }
 
         if (args.Length == 2)
         {
             if (args[0] is Literal && args[1] is Identifier)
-                Utils.ErrorLang(ErrorType.Compilation, file, $"Cannot have swapped arguments", line, col);
+                Utils.ErrorLang(ErrorType.Compilation, $"Cannot have swapped arguments", file, line, col);
 
             if (args[0] is Identifier)
             {
                 if (args[1] is Literal)
                 {
                     var l = args[1] as Literal;
-                    if (l.LitType == LiteralType.String)
+                    if (l.Type.Kind == TypeKind.String)
                     {
                         int x;
                         if (int.TryParse(l.Value.ToString(), out x))
                         {
-                            if (x < 0) Utils.ErrorLang(ErrorType.Compilation, file, $"Amount of steps cannot be less than 0", line, col);
+                            if (x < 0) Utils.ErrorLang(ErrorType.Compilation, $"Amount of steps cannot be less than 0", file, line, col);
                         }
                     }
-                    if (l.LitType == LiteralType.Int || l.LitType == LiteralType.Int || l.LitType == LiteralType.Hex) { }
+                    if (l.Type.Kind == TypeKind.Int || l.Type.Kind == TypeKind.Int) { }
                 }
             }
         }

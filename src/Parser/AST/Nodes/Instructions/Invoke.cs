@@ -20,6 +20,6 @@ public partial class Instructions
             this.Target = target;
             this.Params = new();
         }
-        public override string ToString() => $"{this.Target.Name}({string.Join(", ", this.Params)})";
+        public override string ToString() => $"{this.Target.Name}({string.Join(", ", this.Params)});";
     }
 }

@@ -17,8 +17,6 @@ public partial class Expressions
 
             this.Left = Left;
             this.Right = Right;
-
-            base.Type = $"Expressions+{this.GetType().Name}";
         }
         public override string ToString() => $"{Left} {Value} {Right}";
     }

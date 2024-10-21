@@ -13,8 +13,6 @@ public partial class Instructions
         {
             this.Condition = condition;
             this.Body = body;
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
 
         public override string ToString() => $"while {Condition} {{\n    {string.Join(", ", Body)}\n}}";

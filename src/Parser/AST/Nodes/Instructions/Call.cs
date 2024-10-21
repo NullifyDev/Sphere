@@ -12,8 +12,6 @@ public partial class Instructions
         {
             this.Target = target;
             this.Arguments = arguments;
-
-            base.Type = $"Expressions+{this.GetType().Name}";
         }
         public override string ToString() => $"{Target}({string.Join(", ", Arguments)})";
     }

@@ -6,10 +6,7 @@ public partial class Instructions
 {
     public record Continue : Node
     {
-        public Continue(string file, int line, int col) : base(file, line, col)
-        {
-            base.Type = $"Instructions+{this.GetType().Name}";
-        }
+        public Continue(string file, int line, int col) : base(file, line, col) {}
         public override string ToString() => $"continue";
     }
 }

@@ -17,12 +17,9 @@ public partial record Parser
                 return Cond ?? CurrNode!;
 
             Node n = this.ParseOne()!;
-            if (n == null) continue;
             if (n is Operator)
             {
                 var o = n as Operator;
-                var cn = CurrNode as Operator;
-                var c = Cond as Operator;
                 if (o.OpType == TokenKind.And || o.OpType == TokenKind.Or)
                 {
                     if (o.Right == null)

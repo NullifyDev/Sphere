@@ -10,9 +10,8 @@ public partial class Instructions
         public Outln(IEnumerable<Node> args, string file, int line, int col) : base(file, line, col)
         {
             this.Args = args;
-
-            base.Type = $"Instructions+{this.GetType().Name}";
         }
-        public override string ToString() => $"outln({string.Join(", ", Args ?? new List<object>(0).AsEnumerable())});";
+        public override string ToString() => $"outln(\"{Type.GetStrFmt(this.Args.Select(x => x))}\", {string.Join(", ", this.Args.Select(x => x))});";
+
     }
 }
