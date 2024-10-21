@@ -9,6 +9,13 @@ This language mainly uses freestanding C/C++ code for its Runtime. The runtime e
 <br>Sphere-written software [will] compile(s) into Sphere Binary Files (or `.sbf`s).  <br>
 <br>
 <br>
+<p align="center">
+    <h1 align="center"><b>THIS PROJECT IS UNDER ALPHA DEVELOPMENT</b></h1>
+</p>
+<p align="center">Any feature may change at any given point in time.</p>
+<br>
+<br>
+<br>
 
 # Examples
 ```ps1
