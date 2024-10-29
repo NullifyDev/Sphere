@@ -17,7 +17,7 @@ public partial record Parser
         }
         return new Instructions.In(null!, file, line, col);
     }
-    
+
     public Node ParseInln(string file, int line, int col)
     {
         Node[] args = GetInstArgs();

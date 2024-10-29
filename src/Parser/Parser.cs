@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Sphere.Lexer;
 using Sphere.Parsers.AST;
 using Sphere.Types;
@@ -22,6 +23,7 @@ public partial record Parser(string file)
     public Stack<Node> Processed = new();
     public List<object> Previous = new();
 
+    string path = "";
 
     public IEnumerable<Node> Parse()
     {
@@ -34,7 +36,7 @@ public partial record Parser(string file)
             {
                 CurrNode = this.ParseOne()!;
                 if (CurrNode == null) break;
-                if (CurrNode.GetType().DeclaringType!.Name == "Instructions")
+                if (CurrNode.GetType().DeclaringType!.BaseType is Instructions || CurrNode is Expressions.Function)
                 {
                     yield return CurrNode!;
                     CurrNode = null;
@@ -96,21 +98,27 @@ public partial record Parser(string file)
             case TokenKind.DoubleEq:
 
             case TokenKind.Pipe:
-                var op = new Expressions.Operator(LastToken, null!, null!, curr!.File, curr.Line, curr.Column);
+                var op = new Expressions.Operator(LastToken, null, null, curr!.File, curr.Line, curr.Column);
                 if (op.OpType == TokenKind.Equal)
                 {
                     if (op.Left is Expressions.Identifier && op.Right is Expressions.Literal)
                     {
-                        Expressions.Identifier left = op.Left as Expressions.Identifier;
+                        Expressions.Identifier left = (op.Left as Expressions.Identifier)!;
                         if (left.Literal == null)
                         {
-                            Expressions.Identifier id = new(op.Left as Expressions.Identifier);
+                            var id = left;
+                            id.Literal!.Type = id.Literal.Type == null ? op.Right switch {
+                                Expressions.Identifier iden => iden.Literal!.Type,
+                                Expressions.Literal    lit  => lit.Type
+                            } : id.Literal.Type;
                             id.Literal = op.Right as Expressions.Literal;
                             return id;
                         }
                     }
                 }
-                if (op.OpType == TokenKind.Colon) { }
+                if (op.OpType == TokenKind.Colon) { 
+                    
+                }
 
                 return op;
 
@@ -270,7 +278,7 @@ public partial record Parser(string file)
                     if (cn != null) parameters.Add(cn);
                 }
 
-                TypeKind? ReturnType = null;
+                Expressions.Type ReturnType = new Expressions.Type(TokenKind.DataType_Void, name.File, name.Line, name.Column);
                 if (Next().Kind == TokenKind.Colon)
                 {
                     Node t = ParseOne(Next());
@@ -279,8 +287,8 @@ public partial record Parser(string file)
 
                     ReturnType = t switch
                     {
-                        Expressions.Identifier i => i.Type.Kind,
-                        Expressions.Type dt => dt.Kind,
+                        Expressions.Identifier i => i.Literal!.Type,
+                        Expressions.Type dt => dt,
                     };
 
                     Peek();
@@ -292,9 +300,9 @@ public partial record Parser(string file)
                     // Next();
                     return new Expressions.Function(
                         name,
-                        ReturnType ?? TypeKind.Void,
+                        ReturnType,
                         parameters,
-                        GetBody(),
+                        GetBody($"{path}.FUNCTION_{name}"),
                         curr.File, curr.Line, curr.Column
                     );
                 }

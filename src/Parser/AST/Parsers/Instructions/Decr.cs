@@ -12,6 +12,10 @@ public partial record Parser
         Node[] args = GetInstArgs();
 
         if (args[0] is not Expressions.Identifier) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
+
+        var obj = Compilation.Transpiler.GetObject(args[0]);
+        args[0] = obj == null ? args[0] : obj;
+
         if ((args[0] as Expressions.Identifier)!.Name == "" ||
             (args[0] as Expressions.Identifier)!.Name == null) Utils.Error($"Expected Identifier but got {args[0].GetType().Name}");
 

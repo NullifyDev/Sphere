@@ -1,6 +1,9 @@
 using Sphere.Parsers.AST;
 using Sphere.Lexer;
 using Sphere.Types;
+using System.Security.Cryptography.X509Certificates;
+using System.Data.Common;
+using System.Runtime.Serialization;
 
 namespace Sphere.Compilation;
 
@@ -8,9 +11,32 @@ public partial class Transpiler
 {
     public string File;
 
-    public static Dictionary<string, object> Variables = new();
+    public static List<Expressions.Identifier> Variables = new();
     public static List<Expressions.Function> Functions = new();
     public static Dictionary<string, List<Node>> Objects = new();
+
+    public static Node? GetObject(Node n) {
+        switch (n) {
+            case Expressions.Function f: 
+                try {
+                    var func = Functions.FirstOrDefault(x => x.Name == f.Name); 
+                    if (func != null) {
+                        try {
+                            func = Functions.FirstOrDefault(x => x.Name == f.Name && x.Type.Kind == f.Type.Kind);
+                            return func != null ? func : null;
+                        } catch {
+                            return null;
+                        }
+                    }
+                    return null;
+                } catch {
+                    return null;
+                }
+            case Expressions.Identifier id: 
+                return Variables.SingleOrDefault(x => x.Name == id.Name);
+        };
+        return null;
+    }
 
     public static Expressions.Identifier DefaultPointer = new("DEFAULT_SPHERE_POINTER", null, "", 0, 0);
     private IEnumerable<Node> nodes;
@@ -33,25 +59,31 @@ public partial class Transpiler
 
         // yield return string.Join("\n", nodes.Select(x => TranspileOne(x)));
     }
-    public string Transpile(IEnumerable<Node> nodes, bool isParam = false, bool indent = true)
+    public string Transpile(IEnumerable<Node> nodes, bool isParam = false, bool indent = true, bool isCond = false)
     {
         string res = "";
         foreach (Node n in nodes.Select(x => x))
         {
             if (n == null) continue;
-            if (n.GetType().DeclaringType!.Name == "Instructions")
-            {
-                if (n is not Instructions.If && n is not Instructions.Elif && n is not Instructions.Else && n is not Instructions.For && n is not Instructions.Foreach && n is not Instructions.While && n is not Expressions.Function)
-                    res += $"{TranspileOne(n, indent)}\n";
-                else res += $"{TranspileOne(n, indent)}";
-                continue;
-            }
-            else if (n is Expressions.Identifier || n is Expressions.Literal)
-            {
+            // if (n.GetType().DeclaringType!.BaseType is Instructions)
+            // {
                 res += $"{TranspileOne(n, indent)}";
+                if (n is not Instructions.Return && 
+                    n is not Instructions.If && 
+                    n is not Instructions.Elif && 
+                    n is not Instructions.Else && 
+                    n is not Instructions.For && 
+                    n is not Instructions.Foreach && 
+                    n is not Instructions.While && 
+                    n is not Expressions.Function && 
+                    n is not Expressions.EOL && 
+                    n is not Expressions.EOF)
+                    res += $";";
+
+                res += "\n";
                 continue;
-            }
-            res += isParam ? $"{TranspileOne(n, indent)}, " : $"{TranspileOne(n, indent)}\n";
+            // }
+
         }
 
         if (isParam && res.EndsWith(", "))
@@ -66,32 +98,33 @@ public partial class Transpiler
         switch (curr)
         {
             case Expressions.Function Func:
-                if (Variables.ContainsKey(Func.Name.Name))
+                if (Variables.Any(x => x.Name == Func.Name.Name))
                 {
                     Error.Add(new(ErrorType.Compilation, new Token(TokenKind.Identifier, Func.File, Func.Name.Name, Func.Line, Func.Column), $"{Func.Name.Name} already exists as a Variable"));
                     break;
                 }
 
-                if (Transpiler.Objects.ContainsKey(Func.Name.Name))
-                {
-                    Error.Add(new(ErrorType.Compilation, new Token(TokenKind.Identifier, Func.File, Func.Name.Name, Func.Line, Func.Column), $"{Func.Name.Name} already exists as an Object"));
+                if (Functions.SingleOrDefault(x => x == Func) != null) {
+                    Error.Add(new(ErrorType.Compilation, new Token(TokenKind.Identifier, Func.File, Func.Name.Name, Func.Line, Func.Column), $"Function named \"{Func.Name}\" is already declared"));
                     break;
                 }
 
-                Expressions.Function? fun = Functions.SingleOrDefault(x => x == Func);
-                if (fun == null)
-                {
-                    Functions.Add(Func);
-                    fun = Functions.SingleOrDefault(x => x == Func);
+                Functions.Add(Func);
+                
+                depth++;
+                body = Transpile(Func!.Body);
+                depth--;
 
-                    depth++;
-                    body = Transpile(fun!.Body);
-                    depth--;
-
-                    return $"{new string(' ', depth * 4)}{fun.Type} {fun.Name}({string.Join(", ", this.Transpile(fun.Params, true))})\n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
+                string param = "";
+                foreach(var a in Func.Params) {
+                    param += a switch {
+                        Expressions.Operator op => $"{op.Right.ToString()} {op.Left.ToString()}, ",
+                    };
                 }
-                break;
-
+                if (param.Length > 2) 
+                    param = param[0..^2];
+                
+                return $"{Func.Type} {Func.Name}({string.Join(", ", param)}) {{\n{string.Join("\n    ", body)}}}";
 
 
             case Instructions.Up U:
@@ -102,12 +135,22 @@ public partial class Transpiler
                 depth++;
                 body = this.Transpile(If.Body);
                 depth--;
-                return $"{new string(' ', depth * 4)}if ({TranspileOne(If.Cond)}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
+                
+                string cond = If.Cond.ToString();
+                if (cond.EndsWith(";")) 
+                    cond = cond[0..^1]; 
+
+                return $"if ({If.Cond}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}";
             case Instructions.Elif Elif:
                 depth++;
                 body = this.Transpile(Elif.Body);
                 depth--;
-                return $"{new string(' ', depth * 4)}else if ({TranspileOne(Elif.Cond)}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
+                
+                cond = Elif.Cond.ToString();
+                if (cond.EndsWith(";")) 
+                    cond = cond[0..^1]; 
+
+                return $"{new string(' ', depth * 4)}else if ({Elif.Cond}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}";
             case Instructions.Else Else:
                 depth++;
                 body = Transpile(Else.Body);
@@ -129,11 +172,20 @@ public partial class Transpiler
                 return $"{new string(' ', depth * 4)}{Inln}";
             case Instructions.Continue Continue:
                 return $"{new string(' ', depth * 4)}continue";
+            
             case Instructions.For For:
                 depth++;
                 body = this.Transpile(For.Body);
                 depth--;
-                return $"{new string(' ', depth * 4)}for (int {For.Id!.Name} = {For.Start}; {For.Id} < {For.End}; {For.Id}++) \n{new string(' ', depth * 4)}{{\n{body}\n{new string(' ', depth * 4)}}}\n";
+                // For.Id.Literal = new Expressions.Literal();
+
+                Expressions.Identifier id = For.Id;
+                if (Variables.Any(x => x.Name == id.Name)) {
+                    id = Variables.Single(x => x.Name == id.Name);
+                }
+
+                return $"{new string(' ', depth * 4)}for (int {For.Id!.Name} = {For.Start}; {For.Id.Name} < {For.End}; {For.Id}++) \n{new string(' ', depth * 4)}{{\n{new string(' ', ++depth * 4)}{body}\n{new string(' ', --depth * 4)}}}";
+            
             case Expressions.Literal Lit:
                 return $"{Lit.Type.Kind switch
                 {
@@ -172,13 +224,19 @@ public partial class Transpiler
                 depth++;
                 body = Transpile(Foreach.Body);
                 depth--;
-                return $"{new string(' ', depth * 4)}for (auto {Foreach.In!.Left} : {Foreach.In.Right}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
+
+                return $"{new string(' ', depth * 4)}for (auto {Foreach.In!.Left} : {Foreach.In.Right}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}";
 
             case Instructions.While While:
                 depth++;
                 body = Transpile(While.Body);
                 depth--;
-                return $"{new string(' ', depth * 4)}while ({TranspileOne(While.Condition)}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}\n";
+
+                cond = While.Condition.ToString();
+                if (cond.EndsWith(";")) 
+                    cond = cond[0..^1]; 
+
+                return $"{new string(' ', depth * 4)}while ({cond}) \n{new string(' ', depth * 4)}{{\n{body}{new string(' ', depth * 4)}}}";
             case Instructions.Sphere Sphere:
                 foreach (var n in Sphere.Body)
                 {
@@ -219,8 +277,8 @@ public partial class Transpiler
 
             case Instructions.Return Return:
                 return Return.Items.Count > 1 ?
-                    $"{new string(' ', depth * 4)}return ({string.Join(", ", Transpile(Return.Items))});" :
-                    $"{new string(' ', depth * 4)}return {string.Join(", ", Transpile(Return.Items))};";
+                    $"{new string(' ', depth * 4)}return ({string.Join(", ", Transpile(Return.Items))})" :
+                    $"{new string(' ', depth * 4)}return {string.Join(", ", Transpile(Return.Items))}";
 
             case Instructions.GetCurrAddressVal:
                 var output = DefaultPointer.Name == "$@" ? "DEFAULT_SPHERE_POINTER" : DefaultPointer.Name;

@@ -6,18 +6,19 @@ namespace Sphere.Parsers;
 
 public partial record Parser
 {
-    public List<Node> GetBody()
+    public List<Node> GetBody(string path)
     {
         CurrNode = null;
         Node curr;
         List<Node> nodes = new();
+
         if (Peek().Kind == TokenKind.Colon)
         {
             Next();
             while(Peek().Kind != TokenKind.EOL && Peek().Kind != TokenKind.EOF) {
                 Token tok = Peek()!;
                 while (tok.Kind == TokenKind.EOL) tok = Next()!;
-                if (tok.Kind == TokenKind.LBrace) return this.GetBody();
+                if (tok.Kind == TokenKind.LBrace) return this.GetBody(path);
 
                 curr = this.ParseOne()!;
 

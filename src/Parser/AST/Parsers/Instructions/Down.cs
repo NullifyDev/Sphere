@@ -4,6 +4,7 @@ using Sphere.Lexer;
 using Sphere.Parsers.AST;
 using static Sphere.Parsers.AST.Expressions;
 using Sphere.Types;
+using Sphere.Compilation;
 
 namespace Sphere.Parsers;
 
@@ -44,6 +45,8 @@ public partial record Parser
 
             if (args[0] is Identifier)
             {
+                var obj = Transpiler.GetObject(args[0]);
+                args[0] = obj == null ? args[0] : obj;
                 if (args[1] is Literal)
                 {
                     var l = args[1] as Literal;

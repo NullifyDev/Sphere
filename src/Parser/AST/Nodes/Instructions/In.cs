@@ -11,6 +11,6 @@ public partial class Instructions
         {
             this.Prompt = prompt;
         }
-        public override string ToString() => $"input({Prompt});";
+        public override string ToString() => $"input({Prompt})";
     }
 }

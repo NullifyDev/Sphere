@@ -9,11 +9,21 @@ public partial class Expressions
     public record Identifier : Node
     {
         public string Name;
-        public Expressions.Type Type;
         public Prefix? Prefix;
         public Literal? Literal;
 
-        public Identifier(Identifier id, string? file = "", int? line = 0, int? col = 0) : base("", 0, 0)
+        public Identifier(Identifier id, TypeKind tk, string file, int line, int col) : base(file, line, col)
+        {
+            this.Name = id.Name;
+            this.Prefix = id.Prefix;
+            this.Literal = id.Literal ?? new Literal(TokenKind.DataType_Void, null, file, line, col);
+
+            base.File = id.File;
+            base.Line = id.Line;
+            base.Column = id.Column;
+        }
+
+        public Identifier(Identifier id, string file, int line, int col) : base(file, line, col)
         {
             this.Name = id.Name;
             this.Prefix = id.Prefix;
@@ -43,7 +53,7 @@ public partial class Expressions
 
         public void SetValue(Expressions.Literal lit)
         {
-            if (this.Type == lit.Type)
+            if (this.Literal.Type == lit.Type)
                 this.Literal = lit;
         }
     }

@@ -2,6 +2,8 @@ namespace Sphere.Parsers.AST;
 
 using Sphere.Types;
 using Sphere.Lexer;
+using Sphere.Compilation;
+using System.Security.Cryptography.X509Certificates;
 
 public partial class Expressions
 {
@@ -48,28 +50,41 @@ public partial class Expressions
 
         public bool CompareTo(Type t) => this.Kind == t.Kind;
 
-        public static string GetStrFmt(IEnumerable<Node> n) {
+        public static string GetStrFmt(IEnumerable<Node> n)
+        {
             string res = "";
-            foreach(var s in n) {
+            foreach (var s in n)
+            {
                 res += $"{GetStrFmt(s)} ";
             }
             return res[0..^1];
         }
-        public static string GetStrFmt(Node n) => n switch
+        public static string GetStrFmt(Node? n)
         {
-            Literal l => GetStrFmt(l.Type),
-            Identifier i => GetStrFmt(i.Type),
-            Function f => GetStrFmt(f.Type),
-            Type type => type.Kind switch
-            {
-                TypeKind.String => "%s",
-                TypeKind.Int => "%d",
-                TypeKind.Bool => "%d",
-                TypeKind.Void => "",
-            },
-            _ => "",
-        };
 
+            Utils.Outln(n == null ? $"n: {n.GetType().Name} - null" : $"n: {n.GetType().Name} - {n}");
+            switch (n)
+            {
+                case Expressions.Literal l:
+                    return GetStrFmt(l.Type);
+                case Expressions.Identifier i:
+                    return GetStrFmt(Transpiler.Variables.SingleOrDefault(x => x.Name == i.Name).Literal);
+                case Expressions.Function f:
+                    return GetStrFmt(Transpiler.Functions.SingleOrDefault(x => x.Name == f.Name).Type);
+                case Expressions.Type type:
+
+                    return type.Kind switch
+                    {
+                        TypeKind.String => "%s",
+                        TypeKind.Int => "%d",
+                        TypeKind.Bool => "%d",
+                        TypeKind.Void => "",
+                        _ => (string)Utils.InternalError(FailedProcedure.T, "TypeFormatting", $"Unknown Type {n}", n.File, n.Line, n.Column)
+                    };
+                default:
+                    return n == null ? "null" : "what?";
+            }
+        }
         public override string ToString() => $"{this.Kind.ToString().ToLower()}";
     }
 }

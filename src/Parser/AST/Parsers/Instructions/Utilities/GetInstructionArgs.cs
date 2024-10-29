@@ -1,3 +1,4 @@
+using Sphere.Compilation;
 using Sphere.Lexer;
 using Sphere.Parsers.AST;
 using static Sphere.Parsers.AST.Expressions;
@@ -16,8 +17,13 @@ public partial record Parser
         {
             var node = this.ParseOne(Peek());
 
-            if (node == null || node is EOL || node is EOF) break;
-            args.Add(node!);
+            if (node == null || node is EOL || node is EOF) break; {
+                var res = Transpiler.GetObject(node);
+                if (res == null) {
+                    Error.Add(new ErrorObj(ErrorType.Syntax, node, $"{node} either doesn't exist or it isn't yet declared"));
+                }
+                args.Add(node!);
+            }
         }
         return args.ToArray();
     }

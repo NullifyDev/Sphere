@@ -13,6 +13,6 @@ public partial class Instructions
         {
             this.Args = args;
         }
-        public override string ToString() => $"outln(\"{Type.GetStrFmt(this.Args.Select(x => x))}\", {string.Join(", ", this.Args.Select(x => x))});";
+        public override string ToString() => $"outln(\"{Type.GetStrFmt(this.Args.Select(x => x))}\", {string.Join(", ", this.Args.Select(x => x))})";
     }
 }

@@ -11,13 +11,13 @@ public partial record Parser
     public Node ParseUp(string file, int line, int col)
     {
         Node[] args = GetInstArgs();
-        Expressions.Identifier? targetPtr = null;
+        Identifier? targetPtr = null;
         long amount = 1;
 
         if (args.Length == 0) return new Instructions.Up(file, line, col, targetPtr, amount);
 
-        if (args[0] is not Expressions.Identifier)
-            if (args[0] is not Expressions.Literal)
+        if (args[0] is not Identifier)
+            if (args[0] is not Literal)
                 Utils.ErrorLang(ErrorType.Compilation, $"Expected an Identifier or Literal as first arguent", file, line, col);
 
         if (args[0] is Literal)

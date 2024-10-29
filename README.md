@@ -18,12 +18,12 @@ This language mainly uses freestanding C/C++ code for its Runtime. The runtime e
 <br>
 
 # Examples
-```ps1
+```rust
 main(): int {
     hello: string = "Hello,"
     world: string = "World!"
-    outln hello world
-    outln hello+world 
+    outln hello world 
+    outln $"{hello}{world}"
 }
 
 <# Output:
@@ -51,19 +51,44 @@ This project is written with the latest .Net release So install that before cont
 [Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
 <br><br>
 ### Instructions
-| Instructions and Arguments                | Description                                                                         |
-|-------------------------------------------|-------------------------------------------------------------------------------------|
-| `mov <object> <int>`                      | Move the object by signed number of addresses                                       | 
-| `incr <int>`                              | Increment current address by the given amount                                       |
-| `decr <int>`                              | Decrement current address by the given amount                                       |
-| `<identifier>(): <DataType> {}`           | Function with name as string with one argument                                      |
-| `out <arsg>`                              | Print all arguments before EOL without line break.                                  |
-| `outln <args>`                            | Print all arguments before EOL with line break.                                     |
-| `if <Condition> { <instructions> }`       | Executes Instructions when condition returns true                                   |
-| `elif <Condition> { <instructions> }`     | Executes Instructions when condition returns true when primary condition is not met |
-| `else if  <Condition> { <instructions> }` | Executes Instructions when condition returns true when primary condition is not met |
-| `else { <instructions> }`                 | Executes Instructions when none of the Conditions were met                           |
-| `for <start> <end> <identifier>`          | 
+| Instructions and Arguments                | Description                                                                                                   |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `mov <object> <int>`                      | Move the object by signed number of addresses                                                                 | 
+| `incr <int>`                              | Increment current address by the given amount                                                                 |
+| `decr <int>`                              | Decrement current address by the given amount                                                                 |
+| `<identifier>(): <DataType> {}`           | Function with name as string with one argument                                                                |
+| `out <arsg>`                              | Print all arguments before EOL without line break.                                                            |
+| `outln <args>`                            | Print all arguments before EOL with line break.                                                               |
+| `if <Condition> { <instructions> }`       | Executes Instructions when condition returns true                                                             |
+| `elif <Condition> { <instructions> }`     | Executes Instructions when condition returns true when primary condition is not met                           |
+| `else if  <Condition> { <instructions> }` | Executes Instructions when condition returns true when primary condition is not met                           |
+| `else { <instructions> }`                 | Executes Instructions when none of the Conditions were met                                                    |
+| `for <start> <end> <identifier?> {}`         | Iterates from start value to the end value while iterator is less than or equal to end . Optional: Identifier |
+
+
+# Sphere Execution File
+```
+entry <FileID/FileName>
+
+[dependency]
+./deps/path/to/file.sbf
+./deps/path/to/directory
+./deps/path/to/directory/*
+./deps/path/to/directory/*/.../
+./deps/path/to/directory/...*/
+./deps/path/to/directory/sub.../
+
+[blacklist]
+
+```
+|    Syntax    | Description                                                                                            |
+|--------------|--------------------------------------------------------------------------------------------------------|
+|    `./*`     | All files and folders                                                                                  |
+|  `./*/.../`  | All files, folders and subdirectories (default depth: 1)                                               |
+|  `./...*/`   | recursive subdirectory traversal - `*` can be any number for max depth (default: unlimited)            |
+| `./sub...*/` | recursive subdirectory traversal under `sub` folder (max depth is `*`- default: unlimited)             |
+|  `./*...*/`  | Recursively all files, folders and subdirectories at any depth (max depth is `*`- default: unlimited)  |
+
 
 
 [Learn more (coming soon)](https://github.com/NullifyDev/Sphere)
@@ -72,11 +97,28 @@ This project is written with the latest .Net release So install that before cont
 ### Support
 Any operating systems that support LLVM and `clang` will be immediately supported.
 
-### CPU Architectures Implemented
- - [ ] x86
- - [ ] arm
- - [ ] RISC-V
-
+### Platform Support 
+ - [ ] Freestanding
+   - [ ] x86
+   - [ ] arm
+   - [ ] RISC-V  
+   <br>
+ - [ ] Windows
+   - [ ] x86
+   - [ ] arm
+   - [ ] RISC-V
+   <br>
+ - [ ] Linux
+   - [ ] x86
+   - [ ] arm
+   - [ ] RISC-V
+   <br>
+ - [ ] MacOS
+   - [ ] x86
+   - [ ] arm
+   <br>
+ - [ ] Android
+ - [ ] iOS
 
 ### Indefinate Softawre
 Here are some of the software that are under consideration of development using Sphere as the language

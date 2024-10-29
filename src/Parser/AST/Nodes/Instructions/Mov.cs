@@ -14,6 +14,6 @@ public partial class Instructions
             this.Item = item;
             this.Amount = amount;
         }
-        public override string ToString() => $"mov({Item}, {Amount});";
+        public override string ToString() => $"mov({Item}, {Amount})";
     }
 }

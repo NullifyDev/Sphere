@@ -10,10 +10,10 @@ public partial class Expressions
         public Type Type;
         public List<Node> Params, Body;
 
-        public Function(Identifier name, TypeKind returnType, List<Node> Params, List<Node> Body, string file, int line, int col) : base(file, line, col)
+        public Function(Identifier name, Type returnType, List<Node> Params, List<Node> Body, string file, int line, int col) : base(file, line, col)
         {
             this.Name = name;
-            this.Type = new Expressions.Type(returnType, file, line, col) ?? new Expressions.Type(TypeKind.Void, file, line, col);
+            this.Type = returnType ?? new Type(TypeKind.Void, file, line, col);
             this.Params = Params;
             this.Body = Body;
         }
