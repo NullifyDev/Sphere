@@ -3,10 +3,10 @@
     <h1 align="center"><b>Sphere</b></h1>
 </p>
 
-Sphere is a compact language designed for both software and Operating System Development via direct Raw-Memory-Manipulation <br>
-The language syntax is designed to balance readability and writability by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings. <br><br>
-This language mainly uses freestanding C code for its Runtime. The runtime executable is very CPU Architecture amd OS specific. Therefore, the runtime executable is [going to be] available across mutliple Architectures and OSs.
-<br>Sphere-written software [will] compile(s) into Sphere Binary Files (or `.sbf`s).  <br>
+Sphere is a compact language designed for both software and Operating System Development<br>
+The language syntax is designed to balance readimg and writing by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings. <br><br>
+This language uses "freestanding C"-written runtime. Therefore, it is very CPU Architecture and OS specific (Curently Supported CPU Architecture is below).
+<br>Sphere-written software [will] compile(s) into `.sbf` files.<br>
 <br>
 <br>
 <p align="center">
@@ -29,6 +29,7 @@ main(): int {
 <# Output:
 Hello, World!
 Hello,World!
+
 #>
 ```
 
@@ -67,8 +68,11 @@ This project is written with the latest .Net release So install that before cont
 
 
 # Sphere Execution File
+`sef` files are human-readable link and execution files, planned to have their own conditions and conditional statements (coming soon).
+
+Here is how .sef files will work
 ```
-entry <FileID/FileName>
+entry <FileIdOrFileName>
 
 [dependency]
 ./deps/path/to/file.sbf
@@ -79,7 +83,10 @@ entry <FileID/FileName>
 ./deps/path/to/directory/sub.../
 
 [blacklist]
+# to prevent loading
 
+[whitelist]
+# to allow loading
 ```
 |    Syntax    | Description                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------------------|
