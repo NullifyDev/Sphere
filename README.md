@@ -37,7 +37,7 @@ This project is written with the latest .Net release So install that before cont
 ```
  - Git Clone this repo with the `-b prototype` argument and head into the cloned project.
  - do `dotnet restore` to get all the possible dependencies installed
- - do `dotnet ppublish --self-contained` and wait for it to finish
+ - do `dotnet publish --self-contained` and wait for it to finish
  - now run your new executable by running `<exeNameWithoutDotExe> <SphereFile>`
 ```
 
