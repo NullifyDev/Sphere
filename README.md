@@ -12,9 +12,7 @@ This language mainly uses freestanding C code for its Runtime. The runtime execu
 <p align="center">
     <h1 align="center"><b>THIS PROJECT IS UNDER ALPHA DEVELOPMENT</b></h1>
 </p>
-<p align="center">Any feature may change at any given point in time.</p>
-<br>
-<p align="center">Reader discression is advised</p>
+<p align="center">Any feature may change at any given point in time<br>Reader discression is advised</p>
 <br>
 <br>
 <br>
