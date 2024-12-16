@@ -4,8 +4,8 @@
 </p>
 
 Sphere is a compact language designed for both software and Operating System Development<br>
-The language syntax is designed to balance readimg and writing by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings. <br><br>
-This language uses "freestanding C"-written runtime. Therefore, it is very CPU Architecture and OS specific (Curently Supported CPU Architecture is below).
+The language syntax is designed to balance reading and writing by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings. <br><br>
+This language uses "freestanding C"-written runtime. Therefore, it is very CPU Architecture and OS specific (List of curently supported CPU Architectures and OSs  are below).
 <br>Sphere-written software [will] compile(s) into `.sbf` files.<br>
 <br>
 <br>
@@ -121,14 +121,14 @@ Any operating systems that support LLVM and `clang` will be immediately supporte
    - [ ] RISC-V
    <br>
  - [ ] MacOS
-   - [ ] x86
+   - [ ] x86 (old devices)
    - [ ] arm
    <br>
- - [ ] Android
- - [ ] iOS
+ - [ ] Android (ARM)
+ - [ ] iOS (ARM)
 
 ### Indefinate Software
-Here are some of the software that are under consideration of development using Sphere as the language
+Here are some of the software that are under consideration of development using Sphere as the source code language
  - [ ] Petroglyph IDE
  - [ ] Boulder Package Manager
  - [ ] RollOS (Runtime w/ Userspace)
