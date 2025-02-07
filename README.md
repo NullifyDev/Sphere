@@ -3,17 +3,24 @@
     <h1 align="center"><b>Sphere</b></h1>
 </p>
 
-Sphere is a compact language designed for both software and Operating System Development<br>
-The language syntax is designed to balance reading and writing by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings. <br><br>
-This language uses "freestanding C"-written runtime. Therefore, it is very CPU Architecture and OS specific (List of curently supported CPU Architectures and OSs  are below).
-<br>Sphere-written software [will] compile(s) into `.sbf` files.<br>
+Sphere is a compact language designed with balance between memory control of C and memory safety via runtime-immutability first.<br>
+<br>
+**The Syntax** is designed to balance reading and writing by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings.<br>
+<br>
+**The Compilation** is deisgned to modify the code into a more memory-safe and efficient code while maintaining the end result by mitigating potential risks of memory corruption, to then convert into custom bytecode for the runtime.<br>
+<br>
+**The Runtime** is written in C and is designed to be freestanding with security mechanism for any undefined or uncoverred cases, conditions or behaviors. Due to this concept, the runtume <br>
+<br>
+This language uses "freestanding C"-written runtime. Therefore, it is very CPU Architecture and OS specific (List of curently supported CPU Architectures and OSs  are below).<br>
+<br>
+<br>
+<br>
+Sphere-written software [will] compile(s) into `.sbf` files.<br>
 <br>
 <br>
 <p align="center">
-    <h1 align="center"><b>THIS PROJECT IS UNDER ALPHA DEVELOPMENT</b></h1>
-</p>
-<p align="center">Any feature may change at any given point in time<br>Reader discression is advised</p>
-<br>
+    <h1 align="center"><b>THIS PROJECT IS UNDER ALPHA DEVELOPMENT</b></h1></p>
+<p align="center">Any feature may change at any given point in time<br>Reader discression is advised</p><br>
 <br>
 <br>
 
