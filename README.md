@@ -140,3 +140,8 @@ Here are some of the software that are under consideration of development using 
  - [ ] Boulder Package Manager
  - [ ] RollOS (Runtime w/ Userspace)
  - [ ] Asciigine (Console/Terminal based Game Engine with Ascii graphics)
+
+
+## Where to find me
+To keep yourself up to date with my language, please head over to [r/ProgrammingLanguages](https://discord.gg/MWjdg6GXRn) discord server within the `#sphere` channel under `PROJECTS Q-Y` Category<br>
+I also have a [Discord community server](https://discord.gg/FQuqQTXhhm)
