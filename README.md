@@ -74,8 +74,8 @@ This project is written with the latest .Net release So install that before cont
 | `for <start> <end> <identifier?> {}`         | Iterates from start value to the end value while iterator is less than or equal to end . Optional: Identifier |
 
 
-# Sphere Execution File
-`sef` files are human-readable link and execution files, planned to have their own conditions and conditional statements (coming soon).
+# Sphere Binary Executable file (SBE)
+`sbe` files are human-readable link and execution files, planned to have their own conditions and conditional statements (coming soon).
 
 Here is how .sef files will work
 ```
