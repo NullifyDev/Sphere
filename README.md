@@ -9,7 +9,7 @@ Sphere is a compact language designed with balance between memory control of C a
 <br>
 **The Compilation** is deisgned to modify the code into a more memory-safe and efficient code while maintaining the end result by mitigating potential risks of memory corruption, to then convert into custom bytecode for the runtime.<br>
 <br>
-**The Runtime** is written in C and is designed to be freestanding with security mechanism for any undefined or uncoverred cases, conditions or behaviors. Due to this concept, the runtume <br>
+**The Runtime** is written in C and is designed to be freestanding with security mechanism for any undefined or uncoverred cases, conditions or behaviors. Due to this concept, the runtime <br>
 <br>
 This language uses "freestanding C"-written runtime. Therefore, it is very CPU Architecture and OS specific (List of curently supported CPU Architectures and OSs  are below).<br>
 <br>
