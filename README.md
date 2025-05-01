@@ -5,11 +5,11 @@
 
 Sphere is a compact language designed with balance between memory control of C and memory safety via runtime-immutability first.<br>
 <br>
-**The Syntax** is designed to balance reading and writing by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings.<br>
+**The Syntax** is designed to balance reading and writing by minimizing the amount of characters required to write while maintaining the self-explanatory nature of the code and namings. This is where you can do anything as the sky is the limit.<br>
 <br>
-**The Compilation** is deisgned to modify the code into a more memory-safe and efficient code while maintaining the end result by mitigating potential risks of memory corruption, to then convert into custom bytecode for the runtime.<br>
+**The Compilation** is deisgned to modify the code into a more memory-safe and efficient code while maintaining the end result by mitigating potential risks of memory corruption, to then convert into custom bytecode for the runtime. This is stricter and more limited as to what is possible, so it will try to replicate the exact behavior while making the bytecode safer to run.<br>
 <br>
-**The Runtime** is written in C and is designed to be freestanding with security mechanism for any undefined or uncoverred cases, conditions or behaviors. Due to this concept, the runtime <br>
+**The Runtime** is written in C and is designed to be freestanding with security mechanism for any undefined or uncoverred cases, conditions or behaviors. Due to this concept, the runtime is the __strictest__ part of Sphere as the possibilities are most limited here. This level requires stability and security. Which means all pointers stay on the object they were created on, never refer to anything that isnt of its type, never create nor change the type of the pointer, etc. With all that being said, the runtime has its own safety mechanisms in place to ensure that where most softawre crash, Sphere will try to recover and continue to roll on.<br>
 <br>
 This language uses "freestanding C"-written runtime. Therefore, it is very CPU Architecture and OS specific (List of curently supported CPU Architectures and OSs  are below).<br>
 <br>
