@@ -27,15 +27,21 @@ Sphere-written software [will] compile(s) into `.sbf` files.<br>
 # Examples
 ```rust
 main(): int {
-    hello: string = "Hello,"
-    world: string = "World!"
-    outln hello world 
-    outln $"{hello}{world}"
+    hello: string = "hello world"
+    user: string = "nullifydev"
+    outln "[terminal]: " hello
+    outln "[$user]: give me $$5" // you can get "$" by doing "$$"
+
+    /* placing objects or expressions in "(" and ")" concatonates
+       the end result of the object or expression */
+    outln "[terminal]: ok $(user)!" 
+    ret 0
 }
 
 <# Output:
-Hello, World!
-Hello,World!
+[terminal]: hello world
+[nullifydev]: give me $5
+[terminal]: ok nullifydev!
 
 #>
 ```
