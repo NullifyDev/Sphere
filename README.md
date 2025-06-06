@@ -109,7 +109,7 @@ entry <FileIdOrFileName>
 <br><br>
 
 ### Support
-Any operating systems that support LLVM and `clang` will be immediately supported.
+Any operating systems supported by LLVM and `clang` will immediately be supported.
 
 ### Platform Support 
  - [ ] Freestanding
