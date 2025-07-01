@@ -24,7 +24,7 @@ Sphere-written software [will] compile(s) into `.sbf` files.<br>
 <br>
 <br>
 
-# Examples
+# Example
 ```rust
 main(): int {
     hello: string = "hello world"
@@ -32,7 +32,7 @@ main(): int {
     outln "[terminal]: " hello
     outln "[$user]: give me $$5" // you can get "$" by doing "$$"
 
-    /* placing objects or expressions in "(" and ")" concatonates
+    /* placing objects or expressions in "(" and ")" concatenates
        the end result of the object or expression */
     outln "[terminal]: ok $(user)!" 
     ret 0
